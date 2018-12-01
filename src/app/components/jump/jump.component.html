@@ -1,0 +1,13 @@
+<div class="container">
+  <h2>Jump</h2>
+  <div *ngIf="hasActiveJumpEvent">
+    Ship is already preparing for jump.
+  </div>
+  <div *ngIf="!hasActiveJumpEvent">
+      Insert jump coordinates:
+      <form [formGroup]="jumpForm" (ngSubmit)="onSubmit()">
+        <input formControlName="coordinates">
+        <button  [disabled]="!jumpForm.valid || isSubmitting">Jump</button>
+      </form>
+  </div>
+</div>

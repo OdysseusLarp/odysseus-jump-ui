@@ -1,0 +1,17 @@
+<div class="container">
+  <div *ngIf="odysseus">
+    <h1>Odysseus ship info</h1>
+    <h2>Location</h2>
+    Currently located in subsector {{ odysseus.position.sub_sector }} in sector {{ odysseus.position.sector }} in quadrant {{ odysseus.position.quadrant }}
+    (id {{ odysseus.position.id }})
+  </div>
+  <div *ngIf="events.length">
+    <h2>Active events ({{ events.length }})</h2>
+      <p *ngFor="let event of events; let i = index">
+          {{ event.type }} taking place in {{ event.occurs_in_seconds }} seconds
+      </p>
+  </div>
+  <div *ngIf="!events.length">
+    <h2>No active events</h2>
+  </div>
+</div>
