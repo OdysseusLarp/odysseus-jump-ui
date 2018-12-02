@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client/dist/socket.io';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 interface FinishedEvent {
 	success: boolean;
@@ -26,25 +26,16 @@ export class SocketIoService {
 			this.socket.on('eventAdded', (event: api.Event) => {
 				observer.next(event);
 			});
-			// return () => {
-			// 	this.socket.disconnect();
-			// };
 		});
 		this.eventUpdated = new Observable(observer => {
 			this.socket.on('eventUpdated', (event: api.Event) => {
 				observer.next(event);
 			});
-			// return () => {
-			// 	this.socket.disconnect();
-			// };
 		});
 		this.eventFinished = new Observable(observer => {
 			this.socket.on('eventFinished', (finishedEvent: FinishedEvent) => {
 				observer.next(finishedEvent);
 			});
-			// return () => {
-			// 	this.socket.disconnect();
-			// };
 		});
 	}
 

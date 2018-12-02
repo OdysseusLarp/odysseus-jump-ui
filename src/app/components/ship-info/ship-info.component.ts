@@ -6,9 +6,8 @@ import {
 	SimpleChanges,
 } from '@angular/core';
 import { SocketIoService } from '../../services/socketio.service';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, interval, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { get } from 'lodash';
 import { StateService } from '../../services/state.service';
 import * as moment from 'moment';
 
@@ -36,10 +35,9 @@ export class ShipInfoComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	ngOnInit() {
-		this.events$ = Observable.interval(1000)
-			.switchMap(() => this.stateService.events)
+		this.events$ = combineLatest(this.stateService.events, interval(1000))
 			.pipe(
-				map(events => {
+				map(([events]) => {
 					// Add human readable seconds until jump
 					return events.map(event => ({
 						...event,
