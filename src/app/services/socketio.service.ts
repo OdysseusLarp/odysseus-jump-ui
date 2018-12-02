@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client/dist/socket.io';
 import { Observable } from 'rxjs';
+import { environment } from '@env/environment';
 
 interface FinishedEvent {
 	success: boolean;
@@ -15,9 +16,7 @@ export class SocketIoService {
 	public eventFinished: Observable<FinishedEvent>;
 
 	constructor() {
-		// TODO: Load URL from env
-		const url = 'http://localhost:8888/';
-		this.socket = io(url);
+		this.socket = io(environment.apiUrl);
 		this.initSubscriptions();
 	}
 

@@ -20,7 +20,8 @@
       "@app/*": ["app/*"],
       "@api/*": ["app/api/*"],
       "@services/*": ["app/services/*"],
-      "@components/*": ["app/components/*"]
+      "@components/*": ["app/components/*"],
+      "@env/*": ["environments/*"]
     }
   }
 }
