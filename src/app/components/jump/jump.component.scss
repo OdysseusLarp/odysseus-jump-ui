@@ -1,0 +1,11 @@
+form {
+  display: flex;
+  flex-direction: column;
+  label {
+    padding: 4px 0;
+    font-weight: bold;
+  }
+  input {
+    margin-bottom: 8px;
+  }
+}

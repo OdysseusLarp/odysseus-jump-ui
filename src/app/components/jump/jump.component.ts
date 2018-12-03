@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { putEvent } from '@api/Event';
 import * as moment from 'moment';
 import { Router } from '@angular/router';
+import { pickBy } from 'lodash';
 
 @Component({
 	selector: 'app-jump',
@@ -33,19 +34,15 @@ export class JumpComponent implements OnInit, OnDestroy {
 	onSubmit() {
 		if (this.isSubmitting) return;
 		this.isSubmitting = true;
-		const { coordinates } = this.jumpForm.value;
 		const jumpTime = moment()
 			.add(30, 'seconds') // 30 second jumps hardcoded for testing
 			.format();
-		console.log('Creating jump event');
 		putEvent({
 			type: 'JUMP',
 			ship_id: 'odysseus',
 			is_active: true,
 			occurs_at: jumpTime,
-			metadata: {
-				grid: coordinates,
-			},
+			metadata: pickBy(this.jumpForm.value, Boolean),
 			status: 'Meh', // TODO: Drop status field alltogether?
 		});
 		this.router.navigate(['/']);
@@ -53,7 +50,10 @@ export class JumpComponent implements OnInit, OnDestroy {
 
 	private buildForm() {
 		this.jumpForm = new FormGroup({
-			coordinates: new FormControl('', Validators.required),
+			quadrant: new FormControl('', Validators.required),
+			sector: new FormControl('', Validators.required),
+			sub_sector: new FormControl('', Validators.required),
+			planet_orbit: new FormControl(''),
 		});
 	}
 }

@@ -1,10 +1,4 @@
-import {
-	Component,
-	OnInit,
-	OnDestroy,
-	OnChanges,
-	SimpleChanges,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketIoService } from '../../services/socketio.service';
 import { Subscription, interval, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -16,7 +10,7 @@ import * as moment from 'moment';
 	templateUrl: './ship-info.component.html',
 	styleUrls: ['./ship-info.component.scss'],
 })
-export class ShipInfoComponent implements OnInit, OnDestroy, OnChanges {
+export class ShipInfoComponent implements OnInit, OnDestroy {
 	eventAdded$: Subscription;
 	eventUpdated$: Subscription;
 	eventFinished$: Subscription;
@@ -29,10 +23,6 @@ export class ShipInfoComponent implements OnInit, OnDestroy, OnChanges {
 		private socketService: SocketIoService,
 		private stateService: StateService
 	) {}
-
-	ngOnChanges(changes: SimpleChanges) {
-		console.log('ayyyy', changes);
-	}
 
 	ngOnInit() {
 		this.events$ = combineLatest(this.stateService.events, interval(1000))
@@ -60,7 +50,6 @@ export class ShipInfoComponent implements OnInit, OnDestroy, OnChanges {
 		this.eventFinished$ = this.socketService.eventFinished.subscribe(
 			({ event }) => {
 				console.log('EVENT FINISHED =>', event);
-				if (event.type === 'JUMP') window.alert('Ship jumped!');
 			}
 		);
 		this.ship$ = this.stateService.ship.subscribe(

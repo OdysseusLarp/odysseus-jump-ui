@@ -4,10 +4,17 @@
     Ship is already preparing for jump.
   </div>
   <div *ngIf="!hasActiveJumpEvent">
-      Insert jump coordinates:
+      <p>Insert jump coordinates:</p>
       <form [formGroup]="jumpForm" (ngSubmit)="onSubmit()">
-        <input formControlName="coordinates">
-        <button  [disabled]="!jumpForm.valid || isSubmitting">Jump</button>
+        <label for="quadrant">Quadrant</label>
+        <input id="quadrant" formControlName="quadrant" trim="blur">
+        <label for="sector">Sector</label>
+        <input id="sector" formControlName="sector" trim="blur">
+        <label for="subSector">Sub-sector</label>
+        <input id="subSector" formControlName="sub_sector" trim="blur">
+        <label for="planetOrbit">Planet orbit</label>
+        <input id="planetOrbit" formControlName="planet_orbit" trim="blur">
+        <button [disabled]="!jumpForm.valid || isSubmitting">Jump &gt;&gt;</button>
       </form>
   </div>
 </div>
