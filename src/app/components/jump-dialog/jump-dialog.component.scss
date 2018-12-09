@@ -1,0 +1,18 @@
+form {
+	display: flex;
+	flex-direction: row;
+	max-width: 100%;
+	div {
+		margin: 16px;
+	}
+	div:first-child {
+		margin-left: 0;
+	}
+	label {
+		padding: 4px 0;
+		font-weight: bold;
+	}
+	input {
+		width: 100%;
+	}
+}

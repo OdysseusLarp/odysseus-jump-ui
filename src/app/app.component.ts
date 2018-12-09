@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { getFleetId } from './api/Fleet';
 import { Router } from '@angular/router';
+import { MatDialog, MatSnackBar } from '@angular/material';
+import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
+import { SNACKBAR_DEFAULTS } from './config';
 
 @Component({
 	selector: 'app-root',
@@ -12,7 +15,11 @@ export class AppComponent implements OnInit {
 	ship: any;
 	showGrid = false;
 
-	constructor(private router: Router) {}
+	constructor(
+		private router: Router,
+		public dialog: MatDialog,
+		private snackBar: MatSnackBar
+	) {}
 
 	ngOnInit() {
 		getFleetId('odysseus').then(({ data }) => (this.ship = data));
@@ -21,16 +28,22 @@ export class AppComponent implements OnInit {
 	onShipInfoClick() {
 		this.router.navigate(['/']);
 	}
+
 	onLongRangeScanClick() {}
+
 	onShortRangeScanClick() {}
+
 	onJumpClick() {
-		this.router.navigate(['/jump']);
+		this.dialog.open(JumpDialogComponent, {
+			hasBackdrop: true,
+			width: '600px',
+		});
 	}
+
 	onGridToggle() {
 		this.showGrid = !this.showGrid;
 		console.log(`Grid toggled ${this.showGrid ? 'on' : 'off'}`);
 	}
-	onDecodeSignalClick() {
-		console.log('');
-	}
+
+	onDecodeSignalClick() {}
 }

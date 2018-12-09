@@ -4,6 +4,8 @@ import { Subscription, interval, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StateService } from '../../services/state.service';
 import * as moment from 'moment';
+import { MatSnackBar } from '@angular/material';
+import { SNACKBAR_DEFAULTS } from '../../config';
 
 @Component({
 	selector: 'app-ship-info',
@@ -21,7 +23,8 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private socketService: SocketIoService,
-		private stateService: StateService
+		private stateService: StateService,
+		private snackBar: MatSnackBar
 	) {}
 
 	ngOnInit() {
@@ -49,7 +52,11 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 		});
 		this.eventFinished$ = this.socketService.eventFinished.subscribe(
 			({ event }) => {
+				this.stateService.fetchShip();
 				console.log('EVENT FINISHED =>', event);
+				if (event.type === 'JUMP') {
+					this.snackBar.open('Jump succesful', null, SNACKBAR_DEFAULTS);
+				}
 			}
 		);
 		this.ship$ = this.stateService.ship.subscribe(
