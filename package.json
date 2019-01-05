@@ -5,10 +5,11 @@
 	"scripts": {
 		"ng": "ng",
 		"start": "npm run apigen && ng serve --port 4300",
-		"build": "ng build --prod",
+		"build": "ng build --prod --base-href /jumpui/",
 		"test": "ng test",
 		"lint": "ng lint",
 		"apigen": "openapi -s http://localhost:8888/api-docs.json -o ./src/app/api -l ts --semicolon",
+		"apigen:dev": "openapi -s https://odysseus.nicou.me/api-docs.json -o ./src/app/api -l ts --semicolon",
 		"e2e": "ng e2e"
 	},
 	"private": true,

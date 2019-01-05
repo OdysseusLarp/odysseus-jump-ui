@@ -32,6 +32,10 @@
 								{
 									"replace": "src/environments/environment.ts",
 									"with": "src/environments/environment.prod.ts"
+								},
+								{
+									"replace": "src/app/api/gateway/spec.ts",
+									"with": "src/environments/spec.prod.ts"
 								}
 							],
 							"optimization": true,
