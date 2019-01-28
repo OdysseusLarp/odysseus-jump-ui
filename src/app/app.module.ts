@@ -14,6 +14,7 @@ import { SocketIoService } from './services/socketio.service';
 import { StateService } from './services/state.service';
 import { MapComponent } from './components/map/map.component';
 import { JumpDialogComponent } from '@app/components/jump-dialog/jump-dialog.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
 	declarations: [
@@ -31,6 +32,7 @@ import { JumpDialogComponent } from '@app/components/jump-dialog/jump-dialog.com
 		BrowserAnimationsModule,
 		MatDialogModule,
 		MatSnackBarModule,
+		HttpClientModule,
 	],
 	providers: [SocketIoService, StateService],
 	bootstrap: [AppComponent],

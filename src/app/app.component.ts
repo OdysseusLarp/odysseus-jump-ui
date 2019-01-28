@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
 import { SNACKBAR_DEFAULTS } from './config';
+import { StateService } from '@app/services/state.service';
 
 @Component({
 	selector: 'app-root',
@@ -13,11 +14,11 @@ import { SNACKBAR_DEFAULTS } from './config';
 export class AppComponent implements OnInit {
 	title = 'app';
 	ship: any;
-	showGrid = false;
 
 	constructor(
 		private router: Router,
 		public dialog: MatDialog,
+		private state: StateService,
 		private snackBar: MatSnackBar
 	) {}
 
@@ -41,8 +42,8 @@ export class AppComponent implements OnInit {
 	}
 
 	onGridToggle() {
-		this.showGrid = !this.showGrid;
-		console.log(`Grid toggled ${this.showGrid ? 'on' : 'off'}`);
+		const value = !this.state.isGridVisible$.getValue();
+		this.state.isGridVisible$.next(value);
 	}
 
 	onDecodeSignalClick() {}

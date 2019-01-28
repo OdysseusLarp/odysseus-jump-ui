@@ -8,6 +8,7 @@ import { SocketIoService } from './socketio.service';
 export class StateService {
 	events: BehaviorSubject<api.Event[]> = new BehaviorSubject([]);
 	ship: BehaviorSubject<api.Ship> = new BehaviorSubject(null);
+	isGridVisible$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
 	constructor(private socketIoService: SocketIoService) {
 		// Get all active events from API
