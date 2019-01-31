@@ -1,14 +1,13 @@
 <div class="main-container">
-  <div class="sidebar-left">
-    <button (click)="onShipInfoClick()">Ship info</button>
-    <button (click)="onLongRangeScanClick()">Long range scan</button>
-    <button (click)="onShortRangeScanClick()">Short range scan</button>
-    <button (click)="onJumpClick()">Jump</button>
-    <button (click)="onGridToggle()">Show/Hide grid</button>
-    <button (click)="onDecodeSignalClick()">Decode signal</button>
-  </div>
-  <app-map></app-map>
-  <div class="sidebar-right">
-    <router-outlet></router-outlet>
-  </div>
+	<div class="sidebar-left">
+		<button (click)="onShipInfoClick()">Ship info</button>
+		<button (click)="onLongRangeScanClick()">Long range scan</button>
+		<button (click)="onShortRangeScanClick()">Short range scan</button>
+		<button (click)="onJumpClick()">Jump</button>
+		<button (click)="onGridToggle()">Show/Hide grid</button>
+		<button (click)="onDecodeSignalClick()">Decode signal</button>
+		<button (click)="onCenterToShipClick()">Center to ship</button>
+	</div>
+	<app-map></app-map>
+	<div class="sidebar-right"><router-outlet></router-outlet></div>
 </div>

@@ -5,6 +5,7 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
 import { SNACKBAR_DEFAULTS } from './config';
 import { StateService } from '@app/services/state.service';
+import { get } from 'lodash';
 
 @Component({
 	selector: 'app-root',
@@ -39,6 +40,12 @@ export class AppComponent implements OnInit {
 			hasBackdrop: true,
 			width: '600px',
 		});
+	}
+
+	onCenterToShipClick() {
+		const coords = get(this.ship, 'the_geom');
+		if (!coords) return;
+		this.state.centerToShip$.next(coords);
 	}
 
 	onGridToggle() {

@@ -60,6 +60,7 @@ export class MapComponent implements OnInit, OnDestroy {
 	private map: Map;
 	private overlay: Overlay;
 	isGridVisible$: Subscription;
+	centerToShip$: Subscription;
 	clickedFeatures = [];
 
 	constructor(
@@ -114,6 +115,9 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.isGridVisible$ = this.state.isGridVisible$.subscribe(isGridVisible =>
 			layerGrid.setVisible(isGridVisible)
 		);
+		this.centerToShip$ = this.state.centerToShip$.subscribe(coords => {
+			this.map.getView().setCenter(coords);
+		});
 	}
 
 	private getClickedFeatures(coordinate) {

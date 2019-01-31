@@ -11,6 +11,9 @@ export class StateService {
 	isGridVisible$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 	selectedFeature$: BehaviorSubject<any> = new BehaviorSubject(null);
 
+	// Actions kinda
+	centerToShip$: Subject<string> = new Subject();
+
 	constructor(private socketIoService: SocketIoService) {
 		// Get all active events from API
 		this.fetchActiveEvents();
