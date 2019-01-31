@@ -1,1 +1,19 @@
 <div id="map"></div>
+<div id="popup" class="ol-popup" #popup>
+	<div id="popup-content" #popupContent>
+		<ul>
+			<li *ngFor="let feat of clickedFeatures">
+				<span (click)="this.selectFeature(feat)"
+					>{{ feat.properties.name_generated }} ({{
+						feat.properties.category
+					}})</span
+				>
+			</li>
+		</ul>
+	</div>
+	<span
+		id="popup-closer"
+		class="ol-popup-closer"
+		(click)="this.closePopup($event)"
+	></span>
+</div>

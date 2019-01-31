@@ -15,6 +15,7 @@ import { StateService } from './services/state.service';
 import { MapComponent } from './components/map/map.component';
 import { JumpDialogComponent } from '@app/components/jump-dialog/jump-dialog.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ObjectDetailsComponent } from './components/object-details/object-details.component';
 
 @NgModule({
 	declarations: [
@@ -23,6 +24,7 @@ import { HttpClientModule } from '@angular/common/http';
 		ShipInfoComponent,
 		JumpDialogComponent,
 		MapComponent,
+		ObjectDetailsComponent,
 	],
 	imports: [
 		BrowserModule,

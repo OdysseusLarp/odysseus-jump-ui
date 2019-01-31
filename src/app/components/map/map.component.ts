@@ -1,17 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+	Component,
+	OnInit,
+	OnDestroy,
+	ViewChild,
+	ElementRef,
+} from '@angular/core';
 import Map from 'ol/Map';
 import View from 'ol/View';
-// import TileLayer from 'ol/layer/Tile';
-// import XYZ from 'ol/source/XYZ';
-// import TileWMS from 'ol/source/TileWMS';
 import { Image as ImageLayer } from 'ol/layer';
 import ImageWMS from 'ol/source/ImageWMS';
-import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
+import Overlay from 'ol/Overlay';
 import { environment } from '@env/environment';
 import { StateService } from '@app/services/state.service';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { get, camelCase, mapKeys, omitBy } from 'lodash';
+import { Router } from '@angular/router';
 
 const commonLayerSettings = {
 	url: `${environment.geoserverUrl}/wms`,
@@ -31,7 +35,7 @@ function createLayer(layerName, visible = true) {
 	});
 }
 
-function getFeatureProperties(feature) {
+export function getFeatureProperties(feature) {
 	const properties = get(feature, 'properties', {});
 	// Convert keys to camelCase and remove attributes that are only used for
 	// geoserver rendering
@@ -52,9 +56,17 @@ const layerObject = createLayer('odysseus:starmap_object');
 	styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit, OnDestroy {
-	map: Map;
+	@ViewChild('popup') private popup: ElementRef;
+	private map: Map;
+	private overlay: Overlay;
 	isGridVisible$: Subscription;
-	constructor(private state: StateService, private http: HttpClient) {}
+	clickedFeatures = [];
+
+	constructor(
+		private state: StateService,
+		private http: HttpClient,
+		private router: Router
+	) {}
 
 	ngOnInit() {
 		this.initializeMap();
@@ -66,11 +78,29 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.isGridVisible$.unsubscribe();
 	}
 
+	closePopup(e?) {
+		this.overlay.setPosition(undefined);
+		if (e) e.target.blur();
+	}
+
+	selectFeature(feat) {
+		this.state.selectedFeature$.next(feat);
+		this.router.navigate(['/object']);
+	}
+
 	private initializeMap() {
+		this.overlay = new Overlay({
+			element: this.popup.nativeElement,
+			autoPan: true,
+			autoPanAnimation: {
+				duration: 250,
+			},
+		});
 		this.map = new Map({
 			target: 'map',
 			controls: [],
 			layers: [layerAll, layerBgStar, layerGrid, layerObject],
+			overlays: [this.overlay],
 			view: new View({
 				center: [7243850.704901735, -5122382.060104796],
 				zoom: 6,
@@ -99,8 +129,12 @@ export class MapComponent implements OnInit, OnDestroy {
 			.getGetFeatureInfoUrl(coordinate, resolution, projection, params);
 		if (url) {
 			this.http.get(url).subscribe(res => {
-				const features = get(res, 'features', []);
-				features.forEach(feat => console.log(getFeatureProperties(feat)));
+				this.clickedFeatures = get(res, 'features', []);
+				if (this.clickedFeatures.length === 1)
+					this.selectFeature(this.clickedFeatures[0]);
+				else if (this.clickedFeatures.length > 1)
+					this.overlay.setPosition(coordinate);
+				else this.closePopup();
 			});
 		}
 	}
