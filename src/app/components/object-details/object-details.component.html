@@ -1,6 +1,26 @@
 <div>
 	<h1>{{ feature?.properties.name_generated }}</h1>
-	<ul>
-		<li *ngFor="let prop of formattedProperties">{{ prop }}</li>
-	</ul>
+	<div *ngIf="feature && feature.properties.is_scanned">
+		<ul>
+			<li *ngFor="let prop of formattedProperties">{{ prop }}</li>
+		</ul>
+	</div>
+	<div *ngIf="feature && !feature.properties.is_scanned && !isScanning">
+		This object of type {{ feature.properties.category }} has not yet been
+		scanned.
+	</div>
+	<div *ngIf="isScanning && scanEvent">
+		A probe is on its way to scan this object (ETA
+		{{ scanEvent.occurs_in_seconds }} seconds)
+	</div>
+	<!-- Actions -->
+	<div>
+		<button
+			type="button"
+			*ngIf="feature && !feature.properties.is_scanned && !isScanning"
+			(click)="onSendProbeClick()"
+		>
+			Send probe to scan object
+		</button>
+	</div>
 </div>
