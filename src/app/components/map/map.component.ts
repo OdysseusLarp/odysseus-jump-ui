@@ -9,6 +9,10 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import { Image as ImageLayer } from 'ol/layer';
 import ImageWMS from 'ol/source/ImageWMS';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import { Style, Stroke, RegularShape } from 'ol/style';
+import GeoJSON from 'ol/format/GeoJSON';
 import Overlay from 'ol/Overlay';
 import { environment } from '@env/environment';
 import { StateService } from '@app/services/state.service';
@@ -23,6 +27,10 @@ const commonLayerSettings = {
 	transition: 0,
 };
 
+const geoJsonSettings = {
+	geometryName: 'the_geom',
+};
+
 function createLayer(layerName, visible = true) {
 	return new ImageLayer({
 		visible,
@@ -34,6 +42,21 @@ function createLayer(layerName, visible = true) {
 		}),
 	});
 }
+
+function getSelectedFeatureStyle(zoomLevel) {
+	return new Style({
+		image: new RegularShape({
+			stroke: new Stroke({ color: '#04C1BD', width: 2 }),
+			points: 4,
+			radius: zoomLevel,
+			angle: Math.PI / 4,
+		}),
+	});
+}
+
+const selectedFeatureLayer = new VectorLayer({
+	source: new VectorSource({}),
+});
 
 export function getFeatureProperties(feature) {
 	const properties = get(feature, 'properties', {});
@@ -87,6 +110,22 @@ export class MapComponent implements OnInit, OnDestroy {
 	selectFeature(feat) {
 		this.state.selectedFeature$.next(feat);
 		this.router.navigate(['/object']);
+		this.renderSelectedFeature(feat);
+	}
+
+	unselectFeature() {
+		this.closePopup();
+		selectedFeatureLayer.getSource().clear();
+		this.state.selectedFeature$.next(null);
+		this.router.navigate(['/']);
+	}
+
+	private renderSelectedFeature(feat) {
+		const feature = new GeoJSON(geoJsonSettings).readFeature(feat);
+		const zoomLevel = this.map.getView().getZoom();
+		selectedFeatureLayer.getSource().clear();
+		feature.setStyle(getSelectedFeatureStyle(zoomLevel));
+		selectedFeatureLayer.getSource().addFeature(feature);
 	}
 
 	private initializeMap() {
@@ -100,7 +139,13 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.map = new Map({
 			target: 'map',
 			controls: [],
-			layers: [layerAll, layerBgStar, layerGrid, layerObject],
+			layers: [
+				layerAll,
+				layerBgStar,
+				layerGrid,
+				layerObject,
+				selectedFeatureLayer,
+			],
 			overlays: [this.overlay],
 			view: new View({
 				center: [7243850.704901735, -5122382.060104796],
@@ -134,18 +179,30 @@ export class MapComponent implements OnInit, OnDestroy {
 		if (url) {
 			this.http.get(url).subscribe(res => {
 				this.clickedFeatures = get(res, 'features', []);
-				if (this.clickedFeatures.length === 1)
+				if (this.clickedFeatures.length === 1) {
 					this.selectFeature(this.clickedFeatures[0]);
-				else if (this.clickedFeatures.length > 1)
+					this.closePopup();
+				} else if (this.clickedFeatures.length > 1)
 					this.overlay.setPosition(coordinate);
-				else this.closePopup();
+				else this.unselectFeature();
 			});
 		}
+	}
+
+	private updateSelectedStyles() {
+		const zoomLevel = this.map.getView().getZoom();
+		selectedFeatureLayer
+			.getSource()
+			.getFeatures()
+			.forEach(feat => feat.setStyle(getSelectedFeatureStyle(zoomLevel)));
 	}
 
 	private setupEventListeners() {
 		this.map.on('singleclick', e => {
 			this.getClickedFeatures(e.coordinate);
+		});
+		this.map.on('moveend', () => {
+			this.updateSelectedStyles();
 		});
 	}
 }
