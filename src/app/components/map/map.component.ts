@@ -18,7 +18,7 @@ import { environment } from '@env/environment';
 import { StateService } from '@app/services/state.service';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { get, camelCase, mapKeys, omitBy } from 'lodash';
+import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
 import { Router } from '@angular/router';
 
 const commonLayerSettings = {
@@ -53,6 +53,13 @@ function getSelectedFeatureStyle(zoomLevel) {
 		}),
 	});
 }
+
+const selectedGridStyle = new Style({
+	stroke: new Stroke({
+		color: '#04C1BD',
+		width: 2,
+	}),
+});
 
 const selectedFeatureLayer = new VectorLayer({
 	source: new VectorSource({}),
@@ -128,6 +135,15 @@ export class MapComponent implements OnInit, OnDestroy {
 		selectedFeatureLayer.getSource().addFeature(feature);
 	}
 
+	private renderSelectedGrid(feat) {
+		const feature = new GeoJSON(geoJsonSettings).readFeature(feat);
+		// TODO: Remove this hack, actually select the grid and implement actions
+		setTimeout(() => {
+			feature.setStyle(selectedGridStyle);
+			selectedFeatureLayer.getSource().addFeature(feature);
+		}, 50);
+	}
+
 	private initializeMap() {
 		this.overlay = new Overlay({
 			element: this.popup.nativeElement,
@@ -168,16 +184,29 @@ export class MapComponent implements OnInit, OnDestroy {
 	private getClickedFeatures(coordinate) {
 		const resolution = this.map.getView().getResolution();
 		const projection = 'EPSG:3857';
-		const params = {
-			INFO_FORMAT: 'application/json',
-			FEATURE_COUNT: 100,
-			BUFFER: 15,
-		};
-		const url = layerObject
+		const objectUrl = layerObject
 			.getSource()
-			.getGetFeatureInfoUrl(coordinate, resolution, projection, params);
-		if (url) {
-			this.http.get(url).subscribe(res => {
+			.getGetFeatureInfoUrl(coordinate, resolution, projection, {
+				INFO_FORMAT: 'application/json',
+				FEATURE_COUNT: 100,
+				BUFFER: 15,
+			});
+		const gridUrl = layerGrid
+			.getSource()
+			.getGetFeatureInfoUrl(coordinate, resolution, projection, {
+				INFO_FORMAT: 'application/json',
+				BUFFER: 0,
+				FEATURE_COUNT: 1,
+				CQL_FILTER: 'zoom = 4',
+			});
+		if (gridUrl) {
+			this.http.get(gridUrl).subscribe(res => {
+				const feat = first(get(res, 'features', []));
+				if (feat) this.renderSelectedGrid(feat);
+			});
+		}
+		if (objectUrl) {
+			this.http.get(objectUrl).subscribe(res => {
 				this.clickedFeatures = get(res, 'features', []);
 				if (this.clickedFeatures.length === 1) {
 					this.selectFeature(this.clickedFeatures[0]);
@@ -194,7 +223,11 @@ export class MapComponent implements OnInit, OnDestroy {
 		selectedFeatureLayer
 			.getSource()
 			.getFeatures()
-			.forEach(feat => feat.setStyle(getSelectedFeatureStyle(zoomLevel)));
+			.forEach(feat => {
+				// only restyle selected starmap objects, not the grid
+				if (feat.getId().match(/^grid/)) return;
+				feat.setStyle(getSelectedFeatureStyle(zoomLevel));
+			});
 	}
 
 	private setupEventListeners() {
