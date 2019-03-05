@@ -16,7 +16,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Overlay from 'ol/Overlay';
 import { environment } from '@env/environment';
 import { StateService } from '@app/services/state.service';
-import { Subscription } from 'rxjs';
+import { Subscription, zip } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
 import { Router } from '@angular/router';
@@ -76,9 +76,10 @@ export function getFeatureProperties(feature) {
 }
 
 const layerAll = createLayer('odysseus:starmap_all', false);
-const layerBgStar = createLayer('odysseus:starmap_bg_star', false);
+const layerBgStar = createLayer('odysseus:starmap_bg_star');
 const layerGrid = createLayer('odysseus:starmap_grid');
 const layerObject = createLayer('odysseus:starmap_object');
+const layerFleet = createLayer('odysseus:starmap_fleet');
 
 @Component({
 	selector: 'app-map',
@@ -90,8 +91,12 @@ export class MapComponent implements OnInit, OnDestroy {
 	private map: Map;
 	private overlay: Overlay;
 	isGridVisible$: Subscription;
+	isGridVisible: boolean;
 	centerToShip$: Subscription;
+	jumpEventFinished$: Subscription;
 	clickedFeatures = [];
+	clickedGrid: any;
+	isLoading = false;
 
 	constructor(
 		private state: StateService,
@@ -137,11 +142,20 @@ export class MapComponent implements OnInit, OnDestroy {
 
 	private renderSelectedGrid(feat) {
 		const feature = new GeoJSON(geoJsonSettings).readFeature(feat);
+		// If this grid is already selected, clear the selection
+		if (
+			feature &&
+			this.clickedGrid &&
+			this.clickedGrid.getId() === feature.getId()
+		) {
+			this.clickedGrid = null;
+			selectedFeatureLayer.getSource().clear();
+			return;
+		}
 		// TODO: Remove this hack, actually select the grid and implement actions
-		setTimeout(() => {
-			feature.setStyle(selectedGridStyle);
-			selectedFeatureLayer.getSource().addFeature(feature);
-		}, 50);
+		feature.setStyle(selectedGridStyle);
+		selectedFeatureLayer.getSource().addFeature(feature);
+		this.clickedGrid = feature;
 	}
 
 	private initializeMap() {
@@ -160,28 +174,38 @@ export class MapComponent implements OnInit, OnDestroy {
 				layerBgStar,
 				layerGrid,
 				layerObject,
+				layerFleet,
 				selectedFeatureLayer,
 			],
 			overlays: [this.overlay],
 			view: new View({
 				center: [7243850.704901735, -5122382.060104796],
 				zoom: 6,
-				minZoom: 2,
-				maxZoom: 8,
+				minZoom: 1,
+				maxZoom: 9,
 			}),
 		});
 	}
 
 	private setupSubscriptions() {
-		this.isGridVisible$ = this.state.isGridVisible$.subscribe(isGridVisible =>
-			layerGrid.setVisible(isGridVisible)
-		);
+		this.isGridVisible$ = this.state.isGridVisible$.subscribe(isGridVisible => {
+			this.isGridVisible = isGridVisible;
+			layerGrid.setVisible(isGridVisible);
+		});
 		this.centerToShip$ = this.state.centerToShip$.subscribe(coords => {
 			this.map.getView().setCenter(coords);
+		});
+		this.jumpEventFinished$ = this.state.jumpEventFinished$.subscribe(() => {
+			console.log('Jump event finished emitted, updating sources');
+			// Re-render starmap objects and fleet position after a jump
+			layerObject.getSource().changed();
+			layerFleet.getSource().changed();
 		});
 	}
 
 	private getClickedFeatures(coordinate) {
+		if (this.isLoading) return;
+		this.isLoading = true;
 		const resolution = this.map.getView().getResolution();
 		const projection = 'EPSG:3857';
 		const objectUrl = layerObject
@@ -191,31 +215,43 @@ export class MapComponent implements OnInit, OnDestroy {
 				FEATURE_COUNT: 100,
 				BUFFER: 15,
 			});
+		const requests = [];
+		if (objectUrl) requests.push(this.http.get(objectUrl));
 		const gridUrl = layerGrid
 			.getSource()
 			.getGetFeatureInfoUrl(coordinate, resolution, projection, {
 				INFO_FORMAT: 'application/json',
 				BUFFER: 0,
 				FEATURE_COUNT: 1,
+				// We have multiple grids on top of eachother, so only
+				// pick the one with the lowest zoom level (4)
 				CQL_FILTER: 'zoom = 4',
 			});
-		if (gridUrl) {
-			this.http.get(gridUrl).subscribe(res => {
-				const feat = first(get(res, 'features', []));
-				if (feat) this.renderSelectedGrid(feat);
-			});
+		if (this.isGridVisible && gridUrl) {
+			requests.push(this.http.get(gridUrl));
 		}
-		if (objectUrl) {
-			this.http.get(objectUrl).subscribe(res => {
-				this.clickedFeatures = get(res, 'features', []);
-				if (this.clickedFeatures.length === 1) {
-					this.selectFeature(this.clickedFeatures[0]);
-					this.closePopup();
-				} else if (this.clickedFeatures.length > 1)
-					this.overlay.setPosition(coordinate);
-				else this.unselectFeature();
-			});
-		}
+		zip(...requests).subscribe(
+			([objectRes, gridRes]) => {
+				if (objectRes) {
+					this.clickedFeatures = get(objectRes, 'features', []);
+					if (this.clickedFeatures.length === 1) {
+						this.selectFeature(this.clickedFeatures[0]);
+						this.closePopup();
+					} else if (this.clickedFeatures.length > 1)
+						this.overlay.setPosition(coordinate);
+					else this.unselectFeature();
+				}
+				if (gridRes && !this.clickedFeatures.length) {
+					const gridFeat = first(get(gridRes, 'features', []));
+					if (gridFeat) this.renderSelectedGrid(gridFeat);
+					else this.clickedGrid = null;
+				} else {
+					this.clickedGrid = null;
+				}
+				this.isLoading = false;
+			},
+			err => console.error('Error requesting clicked features', err)
+		);
 	}
 
 	private updateSelectedStyles() {
