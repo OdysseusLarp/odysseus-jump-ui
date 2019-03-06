@@ -10,6 +10,7 @@ export class StateService {
 	ship: BehaviorSubject<api.Ship> = new BehaviorSubject(null);
 	isGridVisible$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 	selectedFeature$: BehaviorSubject<any> = new BehaviorSubject(null);
+	selectedGrid$: BehaviorSubject<any> = new BehaviorSubject(null);
 	jumpEventFinished$: Subject<boolean> = new Subject();
 
 	// Actions kinda

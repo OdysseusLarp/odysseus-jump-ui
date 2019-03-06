@@ -16,6 +16,7 @@ import { MapComponent } from './components/map/map.component';
 import { JumpDialogComponent } from '@app/components/jump-dialog/jump-dialog.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ObjectDetailsComponent } from './components/object-details/object-details.component';
+import { GridDetailsComponent } from './components/grid-details/grid-details.component';
 
 @NgModule({
 	declarations: [
@@ -25,6 +26,7 @@ import { ObjectDetailsComponent } from './components/object-details/object-detai
 		JumpDialogComponent,
 		MapComponent,
 		ObjectDetailsComponent,
+		GridDetailsComponent,
 	],
 	imports: [
 		BrowserModule,

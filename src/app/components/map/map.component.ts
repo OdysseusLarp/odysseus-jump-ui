@@ -17,6 +17,7 @@ import Overlay from 'ol/Overlay';
 import { environment } from '@env/environment';
 import { StateService } from '@app/services/state.service';
 import { Subscription, zip } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
 import { Router } from '@angular/router';
@@ -76,6 +77,7 @@ export function getFeatureProperties(feature) {
 }
 
 const layerAll = createLayer('odysseus:starmap_all', false);
+const layerGridInfo = createLayer('odysseus:starmap_grid_info', false);
 const layerBgStar = createLayer('odysseus:starmap_bg_star');
 const layerGrid = createLayer('odysseus:starmap_grid');
 const layerObject = createLayer('odysseus:starmap_object');
@@ -132,6 +134,16 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.router.navigate(['/']);
 	}
 
+	selectGrid(feat) {
+		this.router.navigate(['/grid']);
+		this.state.selectedGrid$.next(feat);
+	}
+
+	unselectGrid() {
+		this.clickedGrid = null;
+		this.state.selectedGrid$.next(null);
+	}
+
 	private renderSelectedFeature(feat) {
 		const feature = new GeoJSON(geoJsonSettings).readFeature(feat);
 		const zoomLevel = this.map.getView().getZoom();
@@ -146,16 +158,17 @@ export class MapComponent implements OnInit, OnDestroy {
 		if (
 			feature &&
 			this.clickedGrid &&
-			this.clickedGrid.getId() === feature.getId()
+			this.clickedGrid.getProperties().id === feature.getProperties().id
 		) {
-			this.clickedGrid = null;
+			this.unselectGrid();
 			selectedFeatureLayer.getSource().clear();
 			return;
 		}
+		this.clickedGrid = feature;
 		// TODO: Remove this hack, actually select the grid and implement actions
 		feature.setStyle(selectedGridStyle);
 		selectedFeatureLayer.getSource().addFeature(feature);
-		this.clickedGrid = feature;
+		this.selectGrid(feat);
 	}
 
 	private initializeMap() {
@@ -196,7 +209,6 @@ export class MapComponent implements OnInit, OnDestroy {
 			this.map.getView().setCenter(coords);
 		});
 		this.jumpEventFinished$ = this.state.jumpEventFinished$.subscribe(() => {
-			console.log('Jump event finished emitted, updating sources');
 			// Re-render starmap objects and fleet position after a jump
 			layerObject.getSource().changed();
 			layerFleet.getSource().changed();
@@ -217,7 +229,7 @@ export class MapComponent implements OnInit, OnDestroy {
 			});
 		const requests = [];
 		if (objectUrl) requests.push(this.http.get(objectUrl));
-		const gridUrl = layerGrid
+		const gridUrl = layerGridInfo
 			.getSource()
 			.getGetFeatureInfoUrl(coordinate, resolution, projection, {
 				INFO_FORMAT: 'application/json',
@@ -230,28 +242,29 @@ export class MapComponent implements OnInit, OnDestroy {
 		if (this.isGridVisible && gridUrl) {
 			requests.push(this.http.get(gridUrl));
 		}
-		zip(...requests).subscribe(
-			([objectRes, gridRes]) => {
-				if (objectRes) {
-					this.clickedFeatures = get(objectRes, 'features', []);
-					if (this.clickedFeatures.length === 1) {
-						this.selectFeature(this.clickedFeatures[0]);
-						this.closePopup();
-					} else if (this.clickedFeatures.length > 1)
-						this.overlay.setPosition(coordinate);
-					else this.unselectFeature();
-				}
-				if (gridRes && !this.clickedFeatures.length) {
-					const gridFeat = first(get(gridRes, 'features', []));
-					if (gridFeat) this.renderSelectedGrid(gridFeat);
-					else this.clickedGrid = null;
-				} else {
-					this.clickedGrid = null;
-				}
-				this.isLoading = false;
-			},
-			err => console.error('Error requesting clicked features', err)
-		);
+		zip(...requests)
+			.pipe(finalize(() => (this.isLoading = false)))
+			.subscribe(
+				([objectRes, gridRes]) => {
+					if (objectRes) {
+						this.clickedFeatures = get(objectRes, 'features', []);
+						if (this.clickedFeatures.length === 1) {
+							this.selectFeature(this.clickedFeatures[0]);
+							this.closePopup();
+						} else if (this.clickedFeatures.length > 1)
+							this.overlay.setPosition(coordinate);
+						else this.unselectFeature();
+					}
+					if (gridRes && !this.clickedFeatures.length) {
+						const gridFeat = first(get(gridRes, 'features', []));
+						if (gridFeat) this.renderSelectedGrid(gridFeat);
+						else this.unselectGrid();
+					} else {
+						this.unselectGrid();
+					}
+				},
+				err => console.error('Error requesting clicked features', err)
+			);
 	}
 
 	private updateSelectedStyles() {
@@ -261,7 +274,7 @@ export class MapComponent implements OnInit, OnDestroy {
 			.getFeatures()
 			.forEach(feat => {
 				// only restyle selected starmap objects, not the grid
-				if (feat.getId().match(/^grid/)) return;
+				if (feat.getId().match(/^starmap_grid_info/)) return;
 				feat.setStyle(getSelectedFeatureStyle(zoomLevel));
 			});
 	}
