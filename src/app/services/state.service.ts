@@ -11,7 +11,7 @@ export class StateService {
 	isGridVisible$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 	selectedFeature$: BehaviorSubject<any> = new BehaviorSubject(null);
 	selectedGrid$: BehaviorSubject<any> = new BehaviorSubject(null);
-	jumpEventFinished$: Subject<boolean> = new Subject();
+	geoEventFinished$: Subject<boolean> = new Subject();
 
 	// Actions kinda
 	centerToShip$: Subject<string> = new Subject();
@@ -36,7 +36,7 @@ export class StateService {
 		socketIoService.eventFinished.subscribe(({ event }) => {
 			if (event.type === 'JUMP') this.fetchShip();
 			this.events.next(this.events.getValue().filter(e => e.id !== event.id));
-			this.jumpEventFinished$.next(true);
+			this.geoEventFinished$.next(true);
 		});
 		this.fetchShip();
 	}

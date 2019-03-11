@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketIoService } from '../../services/socketio.service';
 import { Subscription, interval, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { StateService } from '../../services/state.service';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material';
@@ -28,7 +28,8 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-		this.events$ = combineLatest(this.stateService.events, interval(1000))
+		const updateInterval = interval(1000).pipe(startWith(0));
+		this.events$ = combineLatest(this.stateService.events, updateInterval)
 			.pipe(
 				map(([events]) => {
 					// Add human readable seconds until jump

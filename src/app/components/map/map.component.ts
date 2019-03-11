@@ -17,7 +17,7 @@ import Overlay from 'ol/Overlay';
 import { environment } from '@env/environment';
 import { StateService } from '@app/services/state.service';
 import { Subscription, zip } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, first as firstPipe } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
 import { Router } from '@angular/router';
@@ -95,7 +95,7 @@ export class MapComponent implements OnInit, OnDestroy {
 	isGridVisible$: Subscription;
 	isGridVisible: boolean;
 	centerToShip$: Subscription;
-	jumpEventFinished$: Subscription;
+	geoEventFinished: Subscription;
 	clickedFeatures = [];
 	clickedGrid: any;
 	isLoading = false;
@@ -192,11 +192,16 @@ export class MapComponent implements OnInit, OnDestroy {
 			],
 			overlays: [this.overlay],
 			view: new View({
-				center: [7243850.704901735, -5122382.060104796],
+				center: [0, 0],
 				zoom: 6,
 				minZoom: 1,
 				maxZoom: 9,
 			}),
+		});
+		this.map.render();
+		// When ship data is initially loaded, center map to the ship's location
+		this.state.ship.pipe(firstPipe(Boolean)).subscribe(ship => {
+			this.state.centerToShip$.next(get(ship, 'geom.coordinates'));
 		});
 	}
 
@@ -208,8 +213,10 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.centerToShip$ = this.state.centerToShip$.subscribe(coords => {
 			this.map.getView().setCenter(coords);
 		});
-		this.jumpEventFinished$ = this.state.jumpEventFinished$.subscribe(() => {
+		this.geoEventFinished = this.state.geoEventFinished$.subscribe(() => {
 			// Re-render starmap objects and fleet position after a jump
+			// TODO: Fix bug where this does nothing if the map does not have
+			// focus in the UI - this.map.getViewport().focus() did not help.
 			layerObject.getSource().changed();
 			layerFleet.getSource().changed();
 		});
