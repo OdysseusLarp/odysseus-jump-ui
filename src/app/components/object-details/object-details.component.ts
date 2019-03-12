@@ -3,9 +3,10 @@ import { Subscription, interval, combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
 import { getFeatureProperties } from '@components/map/map.component';
-import { get, set } from 'lodash';
+import { get, set, pick } from 'lodash';
 import * as moment from 'moment';
 import { putEvent } from '@api/Event';
+import { ListItem } from '../dotted-list/dotted-list.component';
 
 @Component({
 	selector: 'app-object-details',
@@ -16,9 +17,11 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	selectedFeature$: Subscription;
 	events$: Subscription;
 	feature: any;
+	properties: any;
 	formattedProperties: any;
 	isScanning = false;
 	scanEvent: api.Event;
+	formattedListItems: ListItem[] = [];
 
 	constructor(private state: StateService) {}
 
@@ -27,9 +30,11 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 		this.selectedFeature$ = this.state.selectedFeature$.subscribe(feat => {
 			this.feature = feat;
 			const props = getFeatureProperties(feat);
+			this.properties = props;
 			this.formattedProperties = Object.keys(props).map(
 				key => `${key}: ${props[key]}`
 			);
+			this.generateFormattedList();
 		});
 		this.events$ = combineLatest(this.state.events, updateInterval)
 			.pipe(
@@ -90,5 +95,48 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 
 	closeBox() {
 		this.state.unselectObject$.next(true);
+	}
+
+	private generateFormattedList() {
+		if (!this.properties) return;
+		// Others:
+		// nameGenerated
+		// habitableZone
+		// nameKnown
+		const props = pick(this.properties, [
+			'ringSystem',
+			'radius',
+			'mass',
+			'celestialBody',
+			'atmosphere',
+			'satelliteOf',
+			'category',
+			'temperature',
+			'orbitalPeriod',
+			'rotation',
+			'orbiterCount',
+			'atmPressure',
+			'distance',
+			'surfaceGravity',
+		]);
+		const list = [
+			{ key: 'Ring system', value: props.ringSystem ? 'Yes' : 'No' },
+			{ key: 'Radius', value: props.radius },
+			{ key: 'Mass', value: props.mass },
+			{ key: 'Celestial body', value: props.celestialBody },
+			{ key: 'Atmosphere', value: props.atmosphere },
+			{ key: 'Category', value: props.category },
+			{ key: 'Temperature', value: `${props.temperature}K` },
+			{ key: 'Orbital period', value: `${props.temperature} days` },
+			{ key: 'Rotation', value: `${props.rotation}°` },
+			{ key: 'Orbiters', value: props.orbiterCount },
+			{ key: 'Atmospheric pressure', value: props.atmPressure },
+			{ key: 'Distance from star', value: props.distance },
+			{ key: 'Surface gravity', value: props.surfaceGravity },
+		].filter(item => {
+			if (item.value === null || item.value === undefined) return false;
+			return true;
+		});
+		this.formattedListItems = list;
 	}
 }
