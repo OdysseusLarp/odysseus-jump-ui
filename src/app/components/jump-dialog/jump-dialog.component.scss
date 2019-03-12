@@ -1,6 +1,9 @@
 :host {
-	background: #f00;
 	color: #fff;
+}
+
+.container {
+	position: relative;
 }
 
 form {
@@ -21,4 +24,11 @@ form {
 	input {
 		width: 100%;
 	}
+}
+
+// Adjust closer position because of dialog
+.box-closer {
+	top: -35px;
+	right: -20px;
+	font-size: 1.5em;
 }

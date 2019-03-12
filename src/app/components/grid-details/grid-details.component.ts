@@ -140,6 +140,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			'quadrant',
 			'sector',
 			'subSector',
+			'subQuadrant',
 			'planetCount',
 			'cometCount',
 			'naturalSatelliteCount',
@@ -147,12 +148,14 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 		]);
 		let list = [
 			{ key: 'Quadrant', value: props.quadrant },
+			{ key: 'Sub-quadrant', value: props.subQuadrant },
 			{ key: 'Sector', value: props.sector },
 			{ key: 'Sub-sector', value: props.subSector },
 		];
 		if (this.properties.isDiscovered) {
 			list = [
 				...list,
+				{ key: '', value: '' },
 				{ key: 'Planets', value: props.planetCount },
 				{ key: 'Comets', value: props.cometCount },
 				{ key: 'Satellites', value: props.naturalSatelliteCount },

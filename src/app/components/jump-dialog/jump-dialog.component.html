@@ -23,5 +23,9 @@
 		<button class="button block" [disabled]="!jumpForm.valid || isSubmitting" type="button" (click)="onSubmit()">
 			Jump &gt;&gt;
 		</button>
+		<span
+			class="box-closer link"
+			(click)="this.close()"
+		></span>
 	</div>
 </div>

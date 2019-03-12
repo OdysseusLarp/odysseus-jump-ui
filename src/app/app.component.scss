@@ -7,17 +7,18 @@
 
 .action-bar {
 	position: absolute;
-	bottom: 0px;
-	right: 0px;
+	top: 0px;
+	left: 0px;
 	z-index: 99999;
 	display: flex;
+	flex-direction: column;
 
 	button {
 		height: 80px;
 		width: 80px;
 		border-radius: 100%;
-		margin-bottom: 6px;
-		margin-right: 12px;
+		margin-top: 6px;
+		margin-left: 6px;
 		background: linear-gradient(180deg, #010412 0%, #010412 45%, #011b2b 100%);
 		border: 3px solid #006466;
 		color: #fff;
@@ -47,11 +48,13 @@
 	top: 0px;
 	right: 0px;
 	max-height: 100%;
+	z-index: 2;
 }
 
 .ship-log {
 	position: absolute;
 	bottom: 8px;
-	left: 8px;
+	right: 8px;
 	max-width: 640px;
+	z-index: 1;
 }
