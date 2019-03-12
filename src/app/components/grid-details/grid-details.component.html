@@ -16,4 +16,8 @@
 	<div *ngIf="canBeScanned">
 		<button class="button block" type="button" (click)="scanGrid()" [disabled]="isScanning">Scan grid</button>
 	</div>
+	<span
+		class="box-closer link"
+		(click)="this.closeBox()"
+	></span>
 </div>

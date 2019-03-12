@@ -94,7 +94,9 @@ export class MapComponent implements OnInit, OnDestroy {
 	isGridVisible$: Subscription;
 	isGridVisible: boolean;
 	centerToShip$: Subscription;
-	geoEventFinished: Subscription;
+	geoEventFinished$: Subscription;
+	unselectGrid$: Subscription;
+	unselectObject$: Subscription;
 	clickedFeatures = [];
 	clickedGrid: any;
 	isLoading = false;
@@ -134,6 +136,11 @@ export class MapComponent implements OnInit, OnDestroy {
 	unselectGrid() {
 		this.clickedGrid = null;
 		this.state.selectedGrid$.next(null);
+		const source = selectedFeatureLayer.getSource();
+		source
+			.getFeatures()
+			.filter(feat => feat.getId().match(/^starmap_grid_info/))
+			.forEach(feat => source.removeFeature(feat));
 	}
 
 	private renderSelectedFeature(feat) {
@@ -205,13 +212,19 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.centerToShip$ = this.state.centerToShip$.subscribe(coords => {
 			this.map.getView().setCenter(coords);
 		});
-		this.geoEventFinished = this.state.geoEventFinished$.subscribe(() => {
+		this.geoEventFinished$ = this.state.geoEventFinished$.subscribe(() => {
 			// Re-render starmap objects and fleet position after a jump
 			// TODO: Fix bug where this does nothing if the map does not have
 			// focus in the UI - this.map.getViewport().focus() did not help.
 			layerObject.getSource().changed();
 			layerFleet.getSource().changed();
 		});
+		this.unselectGrid$ = this.state.unselectGrid$.subscribe(() =>
+			this.unselectGrid()
+		);
+		this.unselectObject$ = this.state.unselectObject$.subscribe(() =>
+			this.unselectFeature()
+		);
 	}
 
 	private getClickedFeatures(coordinate) {

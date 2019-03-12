@@ -57,6 +57,10 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	closeBox() {
+		this.state.unselectGrid$.next(true);
+	}
+
 	private setCanBeScanned(feat) {
 		const ship = this.state.ship.getValue();
 		const shipPosition = pick(get(ship, 'position'), ['x', 'y']);

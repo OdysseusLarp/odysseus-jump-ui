@@ -46,6 +46,19 @@ h3 {
 	background: linear-gradient(180deg, #010412 0%, #010412 45%, #011b2b 100%);
 	border: 3px solid #00c5c8;
 	color: #fff;
+	position: relative;
+}
+
+.box-closer {
+	cursor: pointer;
+	text-decoration: none;
+	position: absolute;
+	top: 8px;
+	right: 16px;
+	font-size: 1.2em;
+}
+.box-closer:after {
+	content: '✖';
 }
 
 .sidebar-box {

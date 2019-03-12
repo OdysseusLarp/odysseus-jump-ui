@@ -86,4 +86,8 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 			status: 'Meh', // TODO: Drop status field alltogether?
 		});
 	}
+
+	closeBox() {
+		this.state.unselectObject$.next(true);
+	}
 }
