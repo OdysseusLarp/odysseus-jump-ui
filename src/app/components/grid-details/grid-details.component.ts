@@ -23,6 +23,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	canBeScanned: boolean;
 	isScanning = false;
 	scanEvent: api.Event;
+	jumpEvent: api.Event;
 	formattedListItems: ListItem[] = [];
 
 	constructor(private state: StateService) {}
@@ -56,11 +57,31 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			.subscribe(events => {
 				const gridId = get(this.selectedGrid, 'properties.id');
 				if (!gridId) return;
+				const {
+					sector,
+					sub_quadrant,
+					sub_sector,
+				} = this.selectedGrid.properties;
 				const scanEvent = events
 					.filter(event => event.type === 'SCAN_GRID')
 					.find(event => get(event, 'metadata.target') === gridId);
+				const jumpEvent = events
+					.filter(event => event.type === 'JUMP')
+					.find(event => {
+						const target = get(event, 'metadata', {});
+						return (
+							target.sector === sector &&
+							target.sub_quadrant === sub_quadrant &&
+							target.sub_sector === sub_sector
+						);
+					});
 				if (scanEvent) this.setScanEvent(scanEvent);
 				else if (!scanEvent && this.scanEvent) this.finishScanEvent();
+				if (jumpEvent) this.jumpEvent = jumpEvent;
+				else if (!jumpEvent && this.jumpEvent) {
+					this.jumpEvent = undefined;
+					this.setIsDiscovered();
+				}
 			});
 	}
 
@@ -125,6 +146,10 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	private finishScanEvent() {
 		this.scanEvent = undefined;
 		this.isScanning = false;
+		this.setIsDiscovered();
+	}
+
+	private setIsDiscovered() {
 		// TODO: Refetch feature instead of doing this dirty stuff
 		if (this.selectedGrid) {
 			set(this.properties, 'isDiscovered', true);
