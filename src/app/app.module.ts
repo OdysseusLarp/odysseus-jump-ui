@@ -7,7 +7,6 @@ import { MatDialogModule, MatSnackBarModule } from '@angular/material';
 import { InputTrimModule } from 'ng2-trim-directive';
 
 import { AppComponent } from './app.component';
-import { JumpComponent } from './components/jump/jump.component';
 import { ShipInfoComponent } from './components/ship-info/ship-info.component';
 import { routes } from './routes';
 import { SocketIoService } from './services/socketio.service';
@@ -23,7 +22,6 @@ import { DottedListComponent } from './components/dotted-list/dotted-list.compon
 @NgModule({
 	declarations: [
 		AppComponent,
-		JumpComponent,
 		ShipInfoComponent,
 		JumpDialogComponent,
 		MapComponent,
