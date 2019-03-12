@@ -4,8 +4,8 @@
 	<div *ngIf="!hasActiveJumpEvent">
 		<form [formGroup]="jumpForm" (ngSubmit)="onSubmit()">
 			<div>
-				<label for="quadrant">Quadrant</label>
-				<input class="input" id="quadrant" formControlName="quadrant" trim="blur" />
+				<label for="subQuadrant">Sub-quadrant</label>
+				<input class="input" id="subQuadrant" formControlName="sub_quadrant" trim="blur" />
 			</div>
 			<div>
 				<label for="sector">Sector</label>

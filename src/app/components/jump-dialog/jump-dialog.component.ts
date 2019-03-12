@@ -60,7 +60,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 
 	private buildForm() {
 		this.jumpForm = new FormGroup({
-			quadrant: new FormControl('', Validators.required),
+			sub_quadrant: new FormControl('', Validators.required),
 			sector: new FormControl('', Validators.required),
 			sub_sector: new FormControl('', Validators.required),
 			planet_orbit: new FormControl(''),
