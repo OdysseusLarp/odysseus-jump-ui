@@ -10,7 +10,8 @@ export interface LogEntry extends api.LogEntry {
 	time?: string;
 }
 
-const MAX_LOG_COUNT = 8;
+// Maximum amount of log entries stored in state
+const MAX_LOG_COUNT = 150;
 
 @Injectable()
 export class StateService {
@@ -85,7 +86,9 @@ export class StateService {
 	setLogEntries(logEntries) {
 		// Only take the last X log entries
 		const logs = logEntries
-			.sort((a, b) => moment(b.created_at).isSameOrAfter(moment(a.created_at)))
+			.sort((a, b) =>
+				moment(a.created_at).isSameOrAfter(moment(b.created_at)) ? -1 : 1
+			)
 			.filter((_, i) => i < MAX_LOG_COUNT);
 		this.log.next(logs);
 	}

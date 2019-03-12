@@ -1,5 +1,30 @@
 .boxed {
 	min-width: 150px;
+	padding-right: 8px;
+}
+
+.log-entries {
+	max-height: 200px;
+	padding-right: 8px;
+	overflow-y: scroll;
+}
+
+.log-filters {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	button {
+		margin: 8px;
+		flex-grow: 1;
+		padding: 4px 8px;
+		font-size: 0.8em;
+	}
+}
+
+.filter-disabled {
+	background: #030a29;
+	transition: background 0.15s;
 }
 
 p {

@@ -1,7 +1,7 @@
 <div class="main-container">
 	<div class="action-bar">
 		<button (click)="onJumpClick()">Jump</button>
-		<button (click)="onGridToggle()">{{ isGridVisible ? 'Hide' : 'Show' }} grid</button>
+		<button (click)="onGridToggle()">{{ (state.isGridVisible$ | async) ? 'Hide' : 'Show' }} grid</button>
 		<button (click)="onDecodeSignalClick()">Decode signal</button>
 		<button (click)="onCenterToShipClick()">Center to ship</button>
 	</div>

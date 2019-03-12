@@ -1,9 +1,19 @@
 <div class="boxed">
   <h2>Ship log</h2>
-  <div *ngIf="!minimized">
-      <p *ngFor="let log of state.log | async">
-          <span class="{{ log.type }}">&nbsp;</span>[{{ log.time }} ago] {{ log.message }}
-      </p>
+  <div *ngIf="!isMinimized">
+      <div class="log-entries">
+          <p *ngFor="let logEntry of log | async">
+              <span class="{{ logEntry.type }}">&nbsp;</span>[{{ logEntry.time }} ago] {{ logEntry.message }}
+          </p>
+      </div>
+    <div class="log-filters">
+      <button
+        *ngFor="let logType of logTypes"
+        type="button"
+        class="button"
+        [ngClass]="{ 'filter-disabled': !isEnabled(logType) }"
+        (click)="toggleEnabledType(logType)">{{ logType }}</button>
+    </div>
   </div>
   <span
     class="box-closer link"
