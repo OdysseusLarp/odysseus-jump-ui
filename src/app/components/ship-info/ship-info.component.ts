@@ -5,6 +5,7 @@ import { map, startWith } from 'rxjs/operators';
 import { StateService } from '../../services/state.service';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material';
+import { get } from 'lodash';
 import { SNACKBAR_DEFAULTS } from '../../config';
 
 @Component({
@@ -20,6 +21,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	ship$: Subscription;
 	events: api.Event[] = [];
 	odysseus: api.Ship;
+	probeCount: number;
 
 	constructor(
 		private socketService: SocketIoService,
@@ -60,9 +62,10 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 				}
 			}
 		);
-		this.ship$ = this.stateService.ship.subscribe(
-			ship => (this.odysseus = ship)
-		);
+		this.ship$ = this.stateService.ship.subscribe(ship => {
+			this.odysseus = ship;
+			this.probeCount = get(ship, 'metadata.probe_count', 0);
+		});
 	}
 
 	ngOnDestroy() {

@@ -85,6 +85,34 @@ h3 {
 	transition: background 0.15s;
 }
 
+.button:focus {
+	outline: none;
+}
+.button::-moz-focus-inner {
+	border: 0;
+}
+
+// Button animation from
+// https://css-tricks.com/books/volume-i/striped-barberpole-animation/
+.button-in-progress {
+	background: #006466;
+	background-image: repeating-linear-gradient(
+		-45deg,
+		transparent,
+		transparent 1rem,
+		#005557 1rem,
+		#005557 2rem
+	);
+	background-size: 200% 200%;
+	animation: barberpole 10s linear infinite;
+	transition: background 0;
+}
+@keyframes barberpole {
+	100% {
+		background-position: 100% 100%;
+	}
+}
+
 .input {
 	font-family: 'exo';
 	background: #030a29;

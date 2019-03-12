@@ -1,0 +1,29 @@
+.boxed {
+	min-width: 150px;
+}
+
+p {
+	font-size: 0.8em;
+}
+
+span {
+	width: 12px;
+	height: 12px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 5px;
+}
+
+.SUCCESS {
+	background: #34df00;
+}
+.WARNING {
+	background: #dfdf00;
+}
+.INFO {
+	background: #0083df;
+}
+.ERROR {
+	background: #df0024;
+}

@@ -41,10 +41,17 @@
 }
 
 .right-sidebar-wrapper {
-	min-width: 450px;
-	max-width: 550px;
+	width: 500px;
+	max-width: 500px;
 	position: absolute;
 	top: 0px;
 	right: 0px;
 	max-height: 100%;
+}
+
+.ship-log {
+	position: absolute;
+	bottom: 8px;
+	left: 8px;
+	max-width: 640px;
 }

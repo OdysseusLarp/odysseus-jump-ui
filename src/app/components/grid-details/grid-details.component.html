@@ -1,20 +1,22 @@
 <div class="boxed sidebar-box" *ngIf="selectedGrid">
 	<h1>{{ properties?.name }}</h1>
 	<div *ngIf="properties">
-		<ul>
-			<li>Quadrant: {{ properties.quadrant }}</li>
-			<li>Sector: {{ properties.sector }}</li>
-			<li>Sub-sector: {{ properties.subSector }}</li>
-		</ul>
-		<ul *ngIf="properties.isDiscovered">
-			<li>Planets: {{ properties.planetCount }}</li>
-			<li>Comets: {{ properties.cometCount }}</li>
-			<li>Satellites: {{ properties.naturalSatelliteCount }}</li>
-			<li>Asteroids: {{ properties.asteroidCount }}</li>
-		</ul>
+		<app-dotted-list [items]="formattedListItems"></app-dotted-list>
 	</div>
 	<div *ngIf="canBeScanned">
-		<button class="button block" type="button" (click)="scanGrid()" [disabled]="isScanning">Scan grid</button>
+		<button
+			class="button block"
+			type="button"
+			[ngClass]="{ 'button-in-progress': isScanning }"
+			(click)="scanGrid()"
+			[disabled]="isScanning">
+			<span *ngIf="isScanning">
+				Probe is scanning {{ properties?.name }} (ETA {{ getEventOccursSeconds(scanEvent) }} seconds)
+			</span>
+			<span *ngIf="!isScanning">
+				Send a probe to scan {{ properties?.name }}
+			</span>
+		</button>
 	</div>
 	<span
 		class="box-closer link"

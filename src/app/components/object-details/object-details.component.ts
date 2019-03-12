@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, interval, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
 import { getFeatureProperties } from '@components/map/map.component';
 import { get, set } from 'lodash';
@@ -23,6 +23,7 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	constructor(private state: StateService) {}
 
 	ngOnInit() {
+		const updateInterval = interval(1000).pipe(startWith(0));
 		this.selectedFeature$ = this.state.selectedFeature$.subscribe(feat => {
 			this.feature = feat;
 			const props = getFeatureProperties(feat);
@@ -30,7 +31,7 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 				key => `${key}: ${props[key]}`
 			);
 		});
-		this.events$ = combineLatest(this.state.events, interval(1000))
+		this.events$ = combineLatest(this.state.events, updateInterval)
 			.pipe(
 				map(([events]) => {
 					// Add human readable seconds until scan completes

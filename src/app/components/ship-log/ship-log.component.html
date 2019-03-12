@@ -1,0 +1,12 @@
+<div class="boxed">
+  <h2>Ship log</h2>
+  <div *ngIf="!minimized">
+      <p *ngFor="let log of state.log | async">
+          <span class="{{ log.type }}">&nbsp;</span>[{{ log.time }} ago] {{ log.message }}
+      </p>
+  </div>
+  <span
+    class="box-closer link"
+    (click)="this.toggleMinimized()"
+  ></span>
+</div>

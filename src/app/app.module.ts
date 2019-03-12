@@ -17,6 +17,8 @@ import { JumpDialogComponent } from '@app/components/jump-dialog/jump-dialog.com
 import { HttpClientModule } from '@angular/common/http';
 import { ObjectDetailsComponent } from './components/object-details/object-details.component';
 import { GridDetailsComponent } from './components/grid-details/grid-details.component';
+import { ShipLogComponent } from './components/ship-log/ship-log.component';
+import { DottedListComponent } from './components/dotted-list/dotted-list.component';
 
 @NgModule({
 	declarations: [
@@ -27,6 +29,8 @@ import { GridDetailsComponent } from './components/grid-details/grid-details.com
 		MapComponent,
 		ObjectDetailsComponent,
 		GridDetailsComponent,
+		ShipLogComponent,
+		DottedListComponent,
 	],
 	imports: [
 		BrowserModule,

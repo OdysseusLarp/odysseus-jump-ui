@@ -4,9 +4,12 @@
         <img src="assets/arati_system_emblem_white.png" />
         <h1>Odysseus ship info</h1>
     </div>
-    <h2>Location</h2>
-    Odysseus is currently located in subsector {{ odysseus.position.sub_sector }} in sector {{ odysseus.position.sector }} in quadrant {{ odysseus.position.quadrant }}
-    (id {{ odysseus.position.id }}).
+    <p>
+      Current position: {{ odysseus.position.name }}
+    </p>
+    <p>
+      Probes left: {{ probeCount }}
+    </p>
   </div>
   <div *ngIf="events.length">
     <h2>Active events ({{ events.length }})</h2>
@@ -14,7 +17,10 @@
           {{ event.type }} taking place in {{ event.occurs_in_seconds }} seconds
       </p>
   </div>
-  <div *ngIf="!events.length">
-    <h2>No active events</h2>
-  </div>
+  <!-- testing -->
+  <!--
+  <button class="button button-in-progress block">
+    Some random button here
+  </button>
+  -->
 </div>

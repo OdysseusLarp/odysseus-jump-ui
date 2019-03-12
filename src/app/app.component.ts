@@ -13,11 +13,15 @@ import { get } from 'lodash';
 export class AppComponent implements OnInit {
 	title = 'app';
 	ship: any;
+	isGridVisible: boolean;
 
 	constructor(public dialog: MatDialog, private state: StateService) {}
 
 	ngOnInit() {
 		getFleetId('odysseus').then(({ data }) => (this.ship = data));
+		this.state.isGridVisible$.subscribe(isGridVisible => {
+			this.isGridVisible = isGridVisible;
+		});
 	}
 
 	onLongRangeScanClick() {}

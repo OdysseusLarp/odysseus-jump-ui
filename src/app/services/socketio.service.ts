@@ -14,6 +14,7 @@ export class SocketIoService {
 	public eventAdded: Observable<api.Event>;
 	public eventUpdated: Observable<api.Event>;
 	public eventFinished: Observable<FinishedEvent>;
+	public logEntryAdded: Observable<api.LogEntry>;
 
 	constructor() {
 		this.socket = io(environment.apiUrl);
@@ -34,6 +35,11 @@ export class SocketIoService {
 		this.eventFinished = new Observable(observer => {
 			this.socket.on('eventFinished', (finishedEvent: FinishedEvent) => {
 				observer.next(finishedEvent);
+			});
+		});
+		this.logEntryAdded = new Observable(observer => {
+			this.socket.on('logEntryAdded', (logEntry: api.LogEntry) => {
+				observer.next(logEntry);
 			});
 		});
 	}

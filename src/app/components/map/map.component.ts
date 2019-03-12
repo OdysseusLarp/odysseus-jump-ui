@@ -293,6 +293,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
 	private setupEventListeners() {
 		this.map.on('singleclick', e => {
+			// if (this.map.getView().getZoom() < 6) return;
 			this.getClickedFeatures(e.coordinate);
 		});
 		this.map.on('moveend', () => {
