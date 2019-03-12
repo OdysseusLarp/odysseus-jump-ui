@@ -1,4 +1,4 @@
-<div>
+<div class="boxed sidebar-box" *ngIf="selectedGrid">
 	<h1>{{ properties?.name }}</h1>
 	<div *ngIf="properties">
 		<ul>
@@ -14,6 +14,6 @@
 		</ul>
 	</div>
 	<div *ngIf="canBeScanned">
-		<button type="button" (click)="scanGrid()" [disabled]="isScanning">Scan grid</button>
+		<button class="button block" type="button" (click)="scanGrid()" [disabled]="isScanning">Scan grid</button>
 	</div>
 </div>

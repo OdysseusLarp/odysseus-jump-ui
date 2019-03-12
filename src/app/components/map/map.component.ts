@@ -20,7 +20,6 @@ import { Subscription, zip } from 'rxjs';
 import { finalize, first as firstPipe } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
-import { Router } from '@angular/router';
 
 const commonLayerSettings = {
 	url: `${environment.geoserverUrl}/wms`,
@@ -100,11 +99,7 @@ export class MapComponent implements OnInit, OnDestroy {
 	clickedGrid: any;
 	isLoading = false;
 
-	constructor(
-		private state: StateService,
-		private http: HttpClient,
-		private router: Router
-	) {}
+	constructor(private state: StateService, private http: HttpClient) {}
 
 	ngOnInit() {
 		this.initializeMap();
@@ -123,7 +118,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
 	selectFeature(feat) {
 		this.state.selectedFeature$.next(feat);
-		this.router.navigate(['/object']);
 		this.renderSelectedFeature(feat);
 	}
 
@@ -131,11 +125,9 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.closePopup();
 		selectedFeatureLayer.getSource().clear();
 		this.state.selectedFeature$.next(null);
-		this.router.navigate(['/']);
 	}
 
 	selectGrid(feat) {
-		this.router.navigate(['/grid']);
 		this.state.selectedGrid$.next(feat);
 	}
 

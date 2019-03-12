@@ -1,3 +1,8 @@
+:host {
+	background: #f00;
+	color: #fff;
+}
+
 form {
 	display: flex;
 	flex-direction: row;
@@ -11,6 +16,7 @@ form {
 	label {
 		padding: 4px 0;
 		font-weight: bold;
+		font-size: 0.85em;
 	}
 	input {
 		width: 100%;

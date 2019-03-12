@@ -4,7 +4,6 @@ import { StateService } from '../../services/state.service';
 import { Subscription } from 'rxjs';
 import { putEvent } from '@api/Event';
 import * as moment from 'moment';
-import { Router } from '@angular/router';
 import { pickBy } from 'lodash';
 
 @Component({
@@ -18,7 +17,7 @@ export class JumpComponent implements OnInit, OnDestroy {
 	hasActiveJumpEvent = false;
 	isSubmitting = false;
 
-	constructor(private stateService: StateService, private router: Router) {}
+	constructor(private stateService: StateService) {}
 
 	ngOnInit() {
 		this.buildForm();
@@ -45,7 +44,6 @@ export class JumpComponent implements OnInit, OnDestroy {
 			metadata: pickBy(this.jumpForm.value, Boolean),
 			status: 'Meh', // TODO: Drop status field alltogether?
 		});
-		this.router.navigate(['/']);
 	}
 
 	private buildForm() {

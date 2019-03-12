@@ -1,9 +1,12 @@
-<div class="container">
+<div class="boxed sidebar-box">
   <div *ngIf="odysseus">
-    <h1>Odysseus ship info</h1>
+    <div class="header">
+        <img src="assets/arati_system_emblem_white.png" />
+        <h1>Odysseus ship info</h1>
+    </div>
     <h2>Location</h2>
-    Currently located in subsector {{ odysseus.position.sub_sector }} in sector {{ odysseus.position.sector }} in quadrant {{ odysseus.position.quadrant }}
-    (id {{ odysseus.position.id }})
+    Odysseus is currently located in subsector {{ odysseus.position.sub_sector }} in sector {{ odysseus.position.sector }} in quadrant {{ odysseus.position.quadrant }}
+    (id {{ odysseus.position.id }}).
   </div>
   <div *ngIf="events.length">
     <h2>Active events ({{ events.length }})</h2>

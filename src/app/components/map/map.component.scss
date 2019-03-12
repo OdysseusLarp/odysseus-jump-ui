@@ -9,18 +9,33 @@
 // Map stuff mostly from https://openlayers.org/en/latest/examples/popup.html
 .ol-popup {
 	position: absolute;
-	background-color: white;
+	background: linear-gradient(180deg, #010412 0%, #010412 45%, #011b2b 100%);
+	border: 3px solid #00c5c8;
+	color: #fff;
 	-webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
 	filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
 	padding: 15px;
 	border-radius: 10px;
-	border: 1px solid #cccccc;
 	bottom: 12px;
 	left: -50px;
-	min-width: 280px;
+	min-width: 320px;
+
+	ul {
+		list-style-type: none;
+		padding: 0;
+		margin: 6px;
+	}
 
 	li {
-		cursor: pointer;
+		padding: 5px auto;
+
+		span {
+			cursor: pointer;
+		}
+	}
+
+	li:last-child {
+		padding: auto;
 	}
 }
 .ol-popup:after,
@@ -34,7 +49,7 @@
 	pointer-events: none;
 }
 .ol-popup:after {
-	border-top-color: white;
+	border-top-color: #00c5c8;
 	border-width: 10px;
 	left: 48px;
 	margin-left: -10px;

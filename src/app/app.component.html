@@ -1,11 +1,15 @@
 <div class="main-container">
-	<div class="sidebar-left">
-		<button (click)="onShipInfoClick()">Ship info</button>
+	<div class="action-bar">
 		<button (click)="onJumpClick()">Jump</button>
 		<button (click)="onGridToggle()">Show/Hide grid</button>
 		<button (click)="onDecodeSignalClick()">Decode signal</button>
 		<button (click)="onCenterToShipClick()">Center to ship</button>
 	</div>
 	<app-map></app-map>
-	<div class="sidebar-right"><router-outlet></router-outlet></div>
+	<div class="right-sidebar-wrapper">
+		<app-ship-info></app-ship-info>
+		<app-object-details></app-object-details>
+		<app-grid-details></app-grid-details>
+	</div>
+	<router-outlet></router-outlet>
 </div>

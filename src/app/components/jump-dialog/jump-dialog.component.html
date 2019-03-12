@@ -5,22 +5,22 @@
 		<form [formGroup]="jumpForm" (ngSubmit)="onSubmit()">
 			<div>
 				<label for="quadrant">Quadrant</label>
-				<input id="quadrant" formControlName="quadrant" trim="blur" />
+				<input class="input" id="quadrant" formControlName="quadrant" trim="blur" />
 			</div>
 			<div>
 				<label for="sector">Sector</label>
-				<input id="sector" formControlName="sector" trim="blur" />
+				<input class="input" id="sector" formControlName="sector" trim="blur" />
 			</div>
 			<div>
 				<label for="subSector">Sub-sector</label>
-				<input id="subSector" formControlName="sub_sector" trim="blur" />
+				<input class="input" id="subSector" formControlName="sub_sector" trim="blur" />
 			</div>
 			<div>
 				<label for="planetOrbit">Planet orbit</label>
-				<input id="planetOrbit" formControlName="planet_orbit" trim="blur" />
+				<input class="input" id="planetOrbit" formControlName="planet_orbit" trim="blur" />
 			</div>
 		</form>
-		<button [disabled]="!jumpForm.valid || isSubmitting" type="button" (click)="onSubmit()">
+		<button class="button block" [disabled]="!jumpForm.valid || isSubmitting" type="button" (click)="onSubmit()">
 			Jump &gt;&gt;
 		</button>
 	</div>

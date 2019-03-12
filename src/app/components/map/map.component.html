@@ -2,18 +2,19 @@
 <div id="popup" class="ol-popup" #popup>
 	<div id="popup-content" #popupContent>
 		<ul>
-			<li *ngFor="let feat of clickedFeatures">
-				<span (click)="this.selectFeature(feat)"
+			<li *ngFor="let feat of clickedFeatures; let i = index">
+				<span class="link" (click)="this.selectFeature(feat)"
 					>{{ feat.properties.name_generated }} ({{
 						feat.properties.category
 					}})</span
 				>
+				<hr *ngIf="i + 1 !== clickedFeatures.length"/>
 			</li>
 		</ul>
 	</div>
 	<span
 		id="popup-closer"
-		class="ol-popup-closer"
+		class="ol-popup-closer link"
 		(click)="this.closePopup($event)"
 	></span>
 </div>

@@ -1,4 +1,4 @@
-<div>
+<div class="boxed sidebar-box" *ngIf="feature">
 	<h1>{{ feature?.properties.name_generated }}</h1>
 	<div *ngIf="feature && feature.properties.is_scanned">
 		<ul>
@@ -17,6 +17,7 @@
 	<div>
 		<button
 			type="button"
+			class="button block"
 			*ngIf="feature && !feature.properties.is_scanned && !isScanning"
 			(click)="onSendProbeClick()"
 		>
