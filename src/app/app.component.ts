@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { getFleetId } from './api/Fleet';
 import { MatDialog } from '@angular/material';
 import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
 import { StateService } from '@app/services/state.service';
@@ -11,22 +10,9 @@ import { get } from 'lodash';
 	styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-	title = 'app';
-	ship: any;
-	isGridVisible: boolean;
-
 	constructor(public dialog: MatDialog, private state: StateService) {}
 
-	ngOnInit() {
-		getFleetId('odysseus').then(({ data }) => (this.ship = data));
-		this.state.isGridVisible$.subscribe(isGridVisible => {
-			this.isGridVisible = isGridVisible;
-		});
-	}
-
-	onLongRangeScanClick() {}
-
-	onShortRangeScanClick() {}
+	ngOnInit() {}
 
 	onJumpClick() {
 		this.dialog.open(JumpDialogComponent, {
@@ -37,7 +23,7 @@ export class AppComponent implements OnInit {
 	}
 
 	onCenterToShipClick() {
-		const coords = get(this.ship, 'geom.coordinates');
+		const coords = get(this.state.ship.getValue(), 'geom.coordinates');
 		if (!coords) return;
 		this.state.centerToShip$.next(coords);
 	}
