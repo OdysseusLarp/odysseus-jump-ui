@@ -10,9 +10,12 @@ import { get } from 'lodash';
 	styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
+	isGridVisible$;
 	constructor(public dialog: MatDialog, private state: StateService) {}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.isGridVisible$ = this.state.isGridVisible$;
+	}
 
 	onJumpClick() {
 		this.dialog.open(JumpDialogComponent, {
