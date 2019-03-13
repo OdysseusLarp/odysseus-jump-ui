@@ -7,6 +7,8 @@ import { putEvent } from '@api/Event';
 import { get, pick, set } from 'lodash';
 import { ListItem } from '../dotted-list/dotted-list.component';
 import * as moment from 'moment';
+import { MatSnackBar } from '@angular/material';
+import { SNACKBAR_DEFAULTS } from '../../config';
 
 @Component({
 	selector: 'app-grid-details',
@@ -18,6 +20,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	selectedGrid: any;
 	selectedGrid$: Subscription;
 	ship$: Subscription;
+	probeCount: number;
 	properties: any;
 	name: string;
 	canBeScanned: boolean;
@@ -26,20 +29,21 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	jumpEvent: api.Event;
 	formattedListItems: ListItem[] = [];
 
-	constructor(private state: StateService) {}
+	constructor(private state: StateService, private snackBar: MatSnackBar) {}
 
 	ngOnInit() {
 		const updateInterval = interval(1000).pipe(startWith(0));
 		this.selectedGrid$ = this.state.selectedGrid$.subscribe(feat => {
 			this.selectedGrid = feat;
+			if (!feat) return this.resetValues();
 			this.setCanBeScanned(feat);
-			if (!feat) return;
 			const props = getFeatureProperties(feat);
 			this.properties = props;
 			this.generateFormattedList();
 		});
-		this.ship$ = this.state.ship.subscribe(() => {
+		this.ship$ = this.state.ship.subscribe(ship => {
 			this.setCanBeScanned(this.selectedGrid);
+			this.probeCount = get(ship, 'metadata.probe_count', 0);
 		});
 		this.events$ = combineLatest(this.state.events, updateInterval)
 			.pipe(
@@ -85,6 +89,14 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			});
 	}
 
+	private resetValues() {
+		this.properties = {};
+		this.canBeScanned = false;
+		this.name = null;
+		this.isScanning = false;
+		this.formattedListItems = [];
+	}
+
 	ngOnDestroy() {
 		this.selectedGrid$.unsubscribe();
 	}
@@ -103,6 +115,11 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			occurs_at: scanTime,
 			metadata: { target: id },
 			status: 'Meh', // TODO: Drop status field alltogether?
+		}).then(res => {
+			if (!res.error) return;
+			this.isScanning = false;
+			const message = get(res, 'data.body.error', '');
+			this.snackBar.open(`Error: ${message}`, null, SNACKBAR_DEFAULTS);
 		});
 	}
 

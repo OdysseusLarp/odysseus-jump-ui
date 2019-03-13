@@ -27,7 +27,7 @@
 		transition: background 0.15s, border 0.15s;
 	}
 
-	button:hover {
+	button:hover:enabled {
 		border: 3px solid #00c5c8;
 		background: #006466;
 		transition: background 0.15s, border 0.15s;

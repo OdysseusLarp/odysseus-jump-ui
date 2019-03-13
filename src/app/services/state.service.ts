@@ -29,10 +29,9 @@ export class StateService {
 	centerToShip$: Subject<string> = new Subject();
 
 	constructor(private socketIoService: SocketIoService) {
-		// Get all active events from API
+		// Get initial data from API
+		this.fetchShip();
 		this.fetchActiveEvents();
-
-		// Get ship log entries
 		this.fetchShipLog();
 
 		// React to event events sent by Socket IO
@@ -49,14 +48,16 @@ export class StateService {
 			this.events.next([...this.events.getValue(), event]);
 		});
 		socketIoService.eventFinished.subscribe(({ event }) => {
-			if (event.type === 'JUMP') this.fetchShip();
 			this.events.next(this.events.getValue().filter(e => e.id !== event.id));
 			this.geoEventFinished$.next(true);
 		});
+
+		// Subscribe to new log entries
 		socketIoService.logEntryAdded.subscribe(logEntry => {
 			const entry = this.parseLogEntry(logEntry);
 			this.setLogEntries([entry, ...this.log.getValue()]);
 		});
+
 		// Parse log entries periodically to update their human readable time
 		interval(10000).subscribe(() => {
 			const logs = this.log
@@ -64,7 +65,8 @@ export class StateService {
 				.map(logEntry => this.parseLogEntry(logEntry));
 			this.setLogEntries(logs);
 		});
-		this.fetchShip();
+
+		socketIoService.shipUpdated.subscribe(ship => this.ship.next(ship));
 	}
 
 	async fetchActiveEvents() {

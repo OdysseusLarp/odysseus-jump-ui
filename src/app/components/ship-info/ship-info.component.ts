@@ -5,8 +5,8 @@ import { map, startWith } from 'rxjs/operators';
 import { StateService } from '../../services/state.service';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material';
-import { get } from 'lodash';
 import { SNACKBAR_DEFAULTS } from '../../config';
+import { get } from 'lodash';
 
 @Component({
 	selector: 'app-ship-info',
@@ -55,10 +55,19 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 		});
 		this.eventFinished$ = this.socketService.eventFinished.subscribe(
 			({ event }) => {
-				this.stateService.fetchShip();
 				console.log('EVENT FINISHED =>', event);
 				if (event.type === 'JUMP') {
-					this.snackBar.open('Jump succesful', null, SNACKBAR_DEFAULTS);
+					const { sub_quadrant, sector, sub_sector } = get(
+						event,
+						'metadata',
+						{}
+					);
+					const targetName = `${sub_quadrant}-${sector}-${sub_sector}`;
+					this.showToast(`Succesfully jumped to ${targetName}`);
+				} else if (event.type === 'SCAN_GRID') {
+					this.showToast(`Succesfully scanned grid`);
+				} else if (event.type === 'SCAN_OBJECT') {
+					this.showToast(`Succesfully scanned object`);
 				}
 			}
 		);
@@ -66,6 +75,10 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			this.odysseus = ship;
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
 		});
+	}
+
+	private showToast(str) {
+		this.snackBar.open(str, null, SNACKBAR_DEFAULTS);
 	}
 
 	ngOnDestroy() {

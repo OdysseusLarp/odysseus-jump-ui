@@ -15,33 +15,19 @@ export class SocketIoService {
 	public eventUpdated: Observable<api.Event>;
 	public eventFinished: Observable<FinishedEvent>;
 	public logEntryAdded: Observable<api.LogEntry>;
+	public shipUpdated: Observable<api.Ship>;
 
 	constructor() {
 		this.socket = io(environment.apiUrl);
-		this.initSubscriptions();
+		this.eventAdded = this.createObservable<api.Event>('eventAdded');
+		this.eventUpdated = this.createObservable<api.Event>('eventUpdated');
+		this.eventFinished = this.createObservable<FinishedEvent>('eventFinished');
+		this.logEntryAdded = this.createObservable<api.LogEntry>('logEntryAdded');
+		this.shipUpdated = this.createObservable<api.Ship>('shipUpdated');
 	}
 
-	initSubscriptions() {
-		this.eventAdded = new Observable(observer => {
-			this.socket.on('eventAdded', (event: api.Event) => {
-				observer.next(event);
-			});
-		});
-		this.eventUpdated = new Observable(observer => {
-			this.socket.on('eventUpdated', (event: api.Event) => {
-				observer.next(event);
-			});
-		});
-		this.eventFinished = new Observable(observer => {
-			this.socket.on('eventFinished', (finishedEvent: FinishedEvent) => {
-				observer.next(finishedEvent);
-			});
-		});
-		this.logEntryAdded = new Observable(observer => {
-			this.socket.on('logEntryAdded', (logEntry: api.LogEntry) => {
-				observer.next(logEntry);
-			});
-		});
+	private createObservable<T>(event: string): Observable<T> {
+		return new Observable(o => this.socket.on(event, (e: T) => o.next(e)));
 	}
 
 	emit(event: string, data: any) {

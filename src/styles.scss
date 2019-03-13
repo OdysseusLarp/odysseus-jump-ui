@@ -81,9 +81,19 @@ h3 {
 	cursor: pointer;
 }
 
-.button:hover {
+.button:hover:enabled:not(.button-in-progress) {
 	background: #00c5c8;
 	transition: background 0.15s;
+}
+
+.button:disabled:not(.button-in-progress) {
+	background: #001f20;
+	color: #d8d8d8;
+	padding: 8px 16px;
+	border: 2px solid #005f61;
+	font-weight: bold;
+	transition: background 0.15s;
+	cursor: not-allowed;
 }
 
 .button:focus {
@@ -107,6 +117,7 @@ h3 {
 	background-size: 200% 200%;
 	animation: barberpole 10s linear infinite;
 	transition: background 0;
+	cursor: progress;
 }
 @keyframes barberpole {
 	100% {
