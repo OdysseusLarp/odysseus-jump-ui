@@ -7,6 +7,10 @@ h2 {
 	margin: 8px auto 0px auto;
 }
 
+h2.minimized {
+	margin: 0px auto;
+}
+
 .log-entries {
 	max-height: 200px;
 	padding-right: 8px;
@@ -78,4 +82,15 @@ span.circle {
 }
 .ERROR {
 	background: #df0024;
+}
+
+.box-closer:after {
+	content: '▼';
+}
+.box-closer.minimized {
+	top: 7px;
+	right: 16px;
+}
+.minimized.box-closer:after {
+	content: '▲';
 }

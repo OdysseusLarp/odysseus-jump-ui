@@ -1,5 +1,5 @@
 <div class="boxed">
-  <h2>Ship log</h2>
+  <h2 [ngClass]="{ 'minimized': isMinimized }">Ship log</h2>
   <div *ngIf="!isMinimized">
       <div class="log-entries">
           <p *ngFor="let logEntry of log | async">
@@ -19,6 +19,7 @@
   </div>
   <span
     class="box-closer link"
+    [ngClass]="{ 'minimized': isMinimized }"
     (click)="this.toggleMinimized()"
   ></span>
 </div>
