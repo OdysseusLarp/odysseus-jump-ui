@@ -11,11 +11,6 @@
 		<p *ngIf="feature.properties.description">
 			{{ feature.properties.description }}
 		</p>
-		<!--
-		<ul>
-			<li *ngFor="let prop of formattedProperties">{{ prop }}</li>
-		</ul>
-		-->
 	</div>
 	<div *ngIf="feature && !feature.properties.is_scanned">
 		This object of type {{ feature.properties.category }} has not yet been

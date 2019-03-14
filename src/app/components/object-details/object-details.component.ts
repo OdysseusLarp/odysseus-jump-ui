@@ -18,7 +18,6 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	events$: Subscription;
 	feature: any;
 	properties: any;
-	formattedProperties: any;
 	isScanning = false;
 	scanEvent: api.Event;
 	formattedListItems: ListItem[] = [];
@@ -31,9 +30,6 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 			this.feature = feat;
 			const props = getFeatureProperties(feat);
 			this.properties = props;
-			this.formattedProperties = Object.keys(props).map(
-				key => `${key}: ${props[key]}`
-			);
 			this.generateFormattedList();
 		});
 		this.events$ = combineLatest(this.state.events, updateInterval)

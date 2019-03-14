@@ -4,7 +4,7 @@ import { StateService } from '../../services/state.service';
 import { Subscription } from 'rxjs';
 import { putEvent } from '@api/Event';
 import * as moment from 'moment';
-import { pickBy } from 'lodash';
+import { pickBy, get } from 'lodash';
 import { MatDialogRef, MatSnackBar } from '@angular/material';
 import { SNACKBAR_DEFAULTS } from '../../config';
 
@@ -49,8 +49,14 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 			occurs_at: jumpTime,
 			metadata: pickBy(this.jumpForm.value, Boolean),
 			status: 'Meh', // TODO: Drop status field alltogether?
+		}).then(res => {
+			if (!res.error) {
+				this.snackBar.open('Jump initiated', null, SNACKBAR_DEFAULTS);
+				return;
+			}
+			const message = get(res, 'data.body.error', '');
+			this.snackBar.open(`Error: ${message}`, null, SNACKBAR_DEFAULTS);
 		});
-		this.snackBar.open('Jump initiated', null, SNACKBAR_DEFAULTS);
 		this.close();
 	}
 

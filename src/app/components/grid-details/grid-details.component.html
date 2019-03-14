@@ -3,21 +3,24 @@
 	<div *ngIf="properties">
 		<app-dotted-list [items]="formattedListItems"></app-dotted-list>
 	</div>
-	<div *ngIf="canBeScanned">
+	<div *ngIf="!isDiscovered">
 		<button
 			class="button block"
 			type="button"
 			[ngClass]="{ 'button-in-progress': isScanning }"
 			(click)="scanGrid()"
-			[disabled]="isScanning || probeCount < 1">
+			[disabled]="!canBeScanned || isScanning || probeCount < 1">
 			<span *ngIf="isScanning">
 				Probe is scanning {{ properties?.name }} (ETA {{ getEventOccursSeconds(scanEvent) }} seconds)
 			</span>
-			<span *ngIf="!isScanning && probeCount > 0">
+			<span *ngIf="!isScanning && probeCount > 0 && canBeScanned">
 				Send probe to scan {{ properties?.name }}
 			</span>
 			<span *ngIf="!isScanning && probeCount < 1">
 				No probes available to perform scan
+			</span>
+			<span *ngIf="!canBeScanned">
+				Target is outside of probe distance
 			</span>
 		</button>
 	</div>
