@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription, interval, combineLatest } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { getFeatureProperties } from '@components/map/map.component';
 import { putEvent } from '@api/Event';
@@ -33,7 +32,6 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	constructor(private state: StateService, private snackBar: MatSnackBar) {}
 
 	ngOnInit() {
-		const updateInterval = interval(1000).pipe(startWith(0));
 		this.selectedGrid$ = this.state.selectedGrid$.subscribe(feat => {
 			this.selectedGrid = feat;
 			if (!feat) return this.resetValues();
@@ -47,48 +45,31 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			this.setCanBeScanned(this.selectedGrid);
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
 		});
-		this.events$ = combineLatest(this.state.events, updateInterval)
-			.pipe(
-				map(([events]) => {
-					// Add human readable seconds until scan completes
-					return events.map(event => ({
-						...event,
-						occurs_in_seconds: moment(event.occurs_at).diff(
-							moment(),
-							'seconds'
-						),
-					}));
-				})
-			)
-			.subscribe(events => {
-				const gridId = get(this.selectedGrid, 'properties.id');
-				if (!gridId) return;
-				const {
-					sector,
-					sub_quadrant,
-					sub_sector,
-				} = this.selectedGrid.properties;
-				const scanEvent = events
-					.filter(event => event.type === 'SCAN_GRID')
-					.find(event => get(event, 'metadata.target') === gridId);
-				const jumpEvent = events
-					.filter(event => event.type === 'JUMP')
-					.find(event => {
-						const target = get(event, 'metadata', {});
-						return (
-							target.sector === sector &&
-							target.sub_quadrant === sub_quadrant &&
-							target.sub_sector === sub_sector
-						);
-					});
-				if (scanEvent) this.setScanEvent(scanEvent);
-				else if (!scanEvent && this.scanEvent) this.finishScanEvent();
-				if (jumpEvent) this.jumpEvent = jumpEvent;
-				else if (!jumpEvent && this.jumpEvent) {
-					this.jumpEvent = undefined;
-					this.setIsDiscovered();
-				}
-			});
+		this.events$ = this.state.timestampedEvents.subscribe(events => {
+			const gridId = get(this.selectedGrid, 'properties.id');
+			if (!gridId) return;
+			const { sector, sub_quadrant, sub_sector } = this.selectedGrid.properties;
+			const scanEvent = events
+				.filter(event => event.type === 'SCAN_GRID')
+				.find(event => get(event, 'metadata.target') === gridId);
+			const jumpEvent = events
+				.filter(event => event.type === 'JUMP')
+				.find(event => {
+					const target = get(event, 'metadata', {});
+					return (
+						target.sector === sector &&
+						target.sub_quadrant === sub_quadrant &&
+						target.sub_sector === sub_sector
+					);
+				});
+			if (scanEvent) this.setScanEvent(scanEvent);
+			else if (!scanEvent && this.scanEvent) this.finishScanEvent();
+			if (jumpEvent) this.jumpEvent = jumpEvent;
+			else if (!jumpEvent && this.jumpEvent) {
+				this.jumpEvent = undefined;
+				this.setIsDiscovered();
+			}
+		});
 	}
 
 	private resetValues() {
@@ -173,6 +154,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 		// TODO: Refetch feature instead of doing this dirty stuff
 		if (this.selectedGrid) {
 			set(this.properties, 'isDiscovered', true);
+			this.isDiscovered = true;
 			this.canBeScanned = false;
 			set(this.selectedGrid, 'properties.is_discovered', true);
 			this.generateFormattedList();

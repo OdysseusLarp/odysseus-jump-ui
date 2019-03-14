@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import * as EventApi from '@api/Event';
 import * as LogApi from '@api/Log';
 import { getFleetId } from '@api/Fleet';
-import { BehaviorSubject, Subject, interval } from 'rxjs';
+import {
+	BehaviorSubject,
+	Subject,
+	interval,
+	combineLatest,
+	Observable,
+} from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { SocketIoService } from './socketio.service';
 import * as moment from 'moment';
 
@@ -16,6 +23,7 @@ const MAX_LOG_COUNT = 150;
 @Injectable()
 export class StateService {
 	events: BehaviorSubject<api.Event[]> = new BehaviorSubject([]);
+	timestampedEvents: Observable<api.Event[]>;
 	ship: BehaviorSubject<api.Ship> = new BehaviorSubject(null);
 	log: BehaviorSubject<LogEntry[]> = new BehaviorSubject([]);
 	isGridVisible$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -66,6 +74,17 @@ export class StateService {
 			this.setLogEntries(logs);
 		});
 
+		// Current event with added 'occurs_at' field
+		const updateInterval = interval(1000).pipe(startWith(0));
+		this.timestampedEvents = combineLatest(this.events, updateInterval).pipe(
+			map(([events]) => {
+				// Add human readable seconds until scan completes
+				return events.map(event => ({
+					...event,
+					occurs_in_seconds: moment(event.occurs_at).diff(moment(), 'seconds'),
+				}));
+			})
+		);
 		socketIoService.shipUpdated.subscribe(ship => this.ship.next(ship));
 	}
 

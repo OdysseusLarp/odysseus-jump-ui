@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription, interval, combineLatest } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { getFeatureProperties } from '@components/map/map.component';
 import { get, set, pick, capitalize } from 'lodash';
@@ -25,35 +24,21 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	constructor(private state: StateService) {}
 
 	ngOnInit() {
-		const updateInterval = interval(1000).pipe(startWith(0));
 		this.selectedFeature$ = this.state.selectedFeature$.subscribe(feat => {
 			this.feature = feat;
 			const props = getFeatureProperties(feat);
 			this.properties = props;
 			this.generateFormattedList();
 		});
-		this.events$ = combineLatest(this.state.events, updateInterval)
-			.pipe(
-				map(([events]) => {
-					// Add human readable seconds until scan completes
-					return events.map(event => ({
-						...event,
-						occurs_in_seconds: moment(event.occurs_at).diff(
-							moment(),
-							'seconds'
-						),
-					}));
-				})
-			)
-			.subscribe(events => {
-				const featureId = get(this.feature, 'properties.id');
-				if (!featureId) return;
-				const scanEvent = events
-					.filter(event => event.type === 'SCAN_OBJECT')
-					.find(event => get(event, 'metadata.target') === featureId);
-				if (scanEvent) this.setScanEvent(scanEvent);
-				else if (!scanEvent && this.scanEvent) this.finishScanEvent();
-			});
+		this.events$ = this.state.timestampedEvents.subscribe(events => {
+			const featureId = get(this.feature, 'properties.id');
+			if (!featureId) return;
+			const scanEvent = events
+				.filter(event => event.type === 'SCAN_OBJECT')
+				.find(event => get(event, 'metadata.target') === featureId);
+			if (scanEvent) this.setScanEvent(scanEvent);
+			else if (!scanEvent && this.scanEvent) this.finishScanEvent();
+		});
 	}
 
 	private setScanEvent(event) {

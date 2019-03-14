@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketIoService } from '../../services/socketio.service';
-import { Subscription, interval, combineLatest } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { StateService } from '../../services/state.service';
-import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material';
 import { SNACKBAR_DEFAULTS } from '../../config';
 import { get } from 'lodash';
@@ -30,23 +28,9 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-		const updateInterval = interval(1000).pipe(startWith(0));
-		this.events$ = combineLatest(this.stateService.events, updateInterval)
-			.pipe(
-				map(([events]) => {
-					// Add human readable seconds until jump
-					return events.map(event => ({
-						...event,
-						occurs_in_seconds: moment(event.occurs_at).diff(
-							moment(),
-							'seconds'
-						),
-					}));
-				})
-			)
-			.subscribe(events => {
-				this.events = events;
-			});
+		this.events$ = this.stateService.timestampedEvents.subscribe(
+			events => (this.events = events)
+		);
 		this.eventAdded$ = this.socketService.eventAdded.subscribe(event => {
 			console.log('EVENT ADDED =>', event);
 		});
