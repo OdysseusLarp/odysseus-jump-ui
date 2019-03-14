@@ -4,12 +4,7 @@
         <img src="assets/arati_system_emblem_white.png" />
         <h1>Odysseus ship info</h1>
     </div>
-    <p>
-      Current position: {{ odysseus.position.name }}
-    </p>
-    <p>
-      Probes left: {{ probeCount }}
-    </p>
+    <app-dotted-list [items]="formattedListItems"></app-dotted-list>
   </div>
   <div *ngIf="events.length">
     <h2>Active events ({{ events.length }})</h2>

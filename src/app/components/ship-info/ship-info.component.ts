@@ -5,6 +5,11 @@ import { StateService } from '../../services/state.service';
 import { MatSnackBar } from '@angular/material';
 import { SNACKBAR_DEFAULTS } from '../../config';
 import { get } from 'lodash';
+import { ListItem } from '../dotted-list/dotted-list.component';
+
+interface Ship extends api.Ship {
+	position?: api.Grid;
+}
 
 @Component({
 	selector: 'app-ship-info',
@@ -18,8 +23,9 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	events$: Subscription;
 	ship$: Subscription;
 	events: api.Event[] = [];
-	odysseus: api.Ship;
+	odysseus: Ship;
 	probeCount: number;
+	formattedListItems: ListItem[] = [];
 
 	constructor(
 		private socketService: SocketIoService,
@@ -56,8 +62,10 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			}
 		);
 		this.ship$ = this.stateService.ship.subscribe(ship => {
+			console.log('jes uus shippi', ship);
 			this.odysseus = ship;
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
+			this.generateFormattedList();
 		});
 	}
 
@@ -71,5 +79,21 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 		this.eventUpdated$.unsubscribe();
 		this.eventFinished$.unsubscribe();
 		this.ship$.unsubscribe();
+	}
+
+	private generateFormattedList() {
+		if (!this.odysseus) return;
+		const props = {
+			position: this.odysseus.position.name,
+			jumpRange: get(this.odysseus, 'metadata.jump_range', 1),
+			scanRange: get(this.odysseus, 'metadata.scan_range', 1),
+		};
+		console.log('jes uudet brobsit', props);
+		this.formattedListItems = [
+			{ key: 'Current position', value: props.position },
+			{ key: 'Jump distance (sub-sector)', value: props.jumpRange },
+			{ key: 'Scan distance (sub-sector)', value: props.scanRange },
+			{ key: 'Probes left (pcs)', value: this.probeCount },
+		];
 	}
 }

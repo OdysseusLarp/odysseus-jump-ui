@@ -3,7 +3,7 @@
   <div *ngIf="!isMinimized">
       <div class="log-entries">
           <p *ngFor="let logEntry of log | async">
-              <span class="{{ 'circle ' + logEntry.type }}">&nbsp;</span>[{{ logEntry.time }} ago] {{ logEntry.message }}
+              <span [title]="logEntry.type" class="{{ 'circle ' + logEntry.type }}">&nbsp;</span>[{{ logEntry.time }} ago] {{ logEntry.message }}
           </p>
       </div>
     <div class="log-filters">

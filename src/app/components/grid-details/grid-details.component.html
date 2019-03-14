@@ -16,7 +16,7 @@
 			<span *ngIf="!isScanning && probeCount > 0 && canBeScanned">
 				Send probe to scan {{ properties?.name }}
 			</span>
-			<span *ngIf="!isScanning && probeCount < 1">
+			<span *ngIf="!isScanning && probeCount < 1 && canBeScanned">
 				No probes available to perform scan
 			</span>
 			<span *ngIf="!canBeScanned">
