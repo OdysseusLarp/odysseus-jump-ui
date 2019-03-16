@@ -62,7 +62,6 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			}
 		);
 		this.ship$ = this.stateService.ship.subscribe(ship => {
-			console.log('jes uus shippi', ship);
 			this.odysseus = ship;
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
 			this.generateFormattedList();
@@ -88,7 +87,6 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			jumpRange: get(this.odysseus, 'metadata.jump_range', 1),
 			scanRange: get(this.odysseus, 'metadata.scan_range', 1),
 		};
-		console.log('jes uudet brobsit', props);
 		this.formattedListItems = [
 			{ key: 'Current position', value: props.position },
 			{ key: 'Jump distance (sub-sector)', value: props.jumpRange },
