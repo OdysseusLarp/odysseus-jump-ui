@@ -14,6 +14,7 @@ import VectorSource from 'ol/source/Vector';
 import { Style, Stroke, RegularShape } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
 import Overlay from 'ol/Overlay';
+import Projection from 'ol/proj/Projection';
 import { environment } from '@env/environment';
 import { StateService } from '@app/services/state.service';
 import { Subscription, zip } from 'rxjs';
@@ -178,6 +179,25 @@ export class MapComponent implements OnInit, OnDestroy {
 				duration: 250,
 			},
 		});
+		const projection = new Projection({
+			code: 'EPSG:3857',
+			extent: [
+				-20037508.342789244,
+				-20037508.342789244,
+				20037508.342789244,
+				20037508.342789244,
+			],
+			global: true,
+			units: 'm',
+			worldExtent: [-180, -85, 180, 85],
+		});
+		const view = new View({
+			center: [0, 0],
+			zoom: 6,
+			minZoom: 1,
+			maxZoom: 9,
+			projection,
+		});
 		this.map = new Map({
 			target: 'map',
 			controls: [],
@@ -190,12 +210,7 @@ export class MapComponent implements OnInit, OnDestroy {
 				selectedFeatureLayer,
 			],
 			overlays: [this.overlay],
-			view: new View({
-				center: [0, 0],
-				zoom: 6,
-				minZoom: 1,
-				maxZoom: 9,
-			}),
+			view,
 		});
 		this.map.render();
 		// When ship data is initially loaded, center map to the ship's location
