@@ -21,11 +21,25 @@ import { Subscription, zip } from 'rxjs';
 import { finalize, first as firstPipe } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
+import { MapBrowserPointerEvent } from 'openlayers';
+
+const projection = new Projection({
+	code: 'EPSG:3857',
+	extent: [
+		-20037508.342789244,
+		-20037508.342789244,
+		20037508.342789244,
+		20037508.342789244,
+	],
+	global: true,
+	units: 'm',
+	worldExtent: [-180, -85, 180, 85],
+});
 
 const commonLayerSettings = {
 	url: `${environment.geoserverUrl}/wms`,
 	serverType: 'geoserver',
-	transition: 0,
+	projection,
 };
 
 const geoJsonSettings = {
@@ -140,12 +154,12 @@ export class MapComponent implements OnInit, OnDestroy {
 		const source = selectedFeatureLayer.getSource();
 		source
 			.getFeatures()
-			.filter(feat => feat.getId().match(/^starmap_grid_info/))
+			.filter(feat => (<string>feat.getId()).match(/^starmap_grid_info/))
 			.forEach(feat => source.removeFeature(feat));
 	}
 
 	private renderSelectedFeature(feat) {
-		const feature = new GeoJSON(geoJsonSettings).readFeature(feat);
+		const feature = new GeoJSON().readFeature(feat);
 		const zoomLevel = this.map.getView().getZoom();
 		selectedFeatureLayer.getSource().clear();
 		feature.setStyle(getSelectedFeatureStyle(zoomLevel));
@@ -153,7 +167,7 @@ export class MapComponent implements OnInit, OnDestroy {
 	}
 
 	private renderSelectedGrid(feat) {
-		const feature = new GeoJSON(geoJsonSettings).readFeature(feat);
+		const feature = new GeoJSON().readFeature(feat);
 		// If this grid is already selected, clear the selection
 		if (
 			feature &&
@@ -175,21 +189,6 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.overlay = new Overlay({
 			element: this.popup.nativeElement,
 			autoPan: true,
-			autoPanAnimation: {
-				duration: 250,
-			},
-		});
-		const projection = new Projection({
-			code: 'EPSG:3857',
-			extent: [
-				-20037508.342789244,
-				-20037508.342789244,
-				20037508.342789244,
-				20037508.342789244,
-			],
-			global: true,
-			units: 'm',
-			worldExtent: [-180, -85, 180, 85],
 		});
 		const view = new View({
 			center: [0, 0],
@@ -301,13 +300,13 @@ export class MapComponent implements OnInit, OnDestroy {
 			.getFeatures()
 			.forEach(feat => {
 				// only restyle selected starmap objects, not the grid
-				if (feat.getId().match(/^starmap_grid_info/)) return;
+				if ((<string>feat.getId()).match(/^starmap_grid_info/)) return;
 				feat.setStyle(getSelectedFeatureStyle(zoomLevel));
 			});
 	}
 
 	private setupEventListeners() {
-		this.map.on('singleclick', e => {
+		this.map.on('singleclick', (e: MapBrowserPointerEvent) => {
 			// if (this.map.getView().getZoom() < 6) return;
 			this.getClickedFeatures(e.coordinate);
 		});

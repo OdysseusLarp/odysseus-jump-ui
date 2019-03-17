@@ -34,7 +34,7 @@ export class StateService {
 	unselectObject$: Subject<boolean> = new Subject();
 
 	// Actions kinda
-	centerToShip$: Subject<string> = new Subject();
+	centerToShip$: Subject<[number, number]> = new Subject();
 
 	constructor(private socketIoService: SocketIoService) {
 		// Get initial data from API
