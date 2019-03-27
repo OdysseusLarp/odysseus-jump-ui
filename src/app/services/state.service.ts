@@ -39,7 +39,7 @@ export class StateService {
 	hasActiveJumpEvent: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 	// Actions kinda
-	centerToShip$: Subject<string> = new Subject();
+	centerToShip$: Subject<[number, number]> = new Subject();
 
 	constructor(private socketIoService: SocketIoService) {
 		// Get initial data from API

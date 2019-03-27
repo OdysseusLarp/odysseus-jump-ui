@@ -26,7 +26,10 @@ export class AppComponent implements OnInit {
 	}
 
 	onCenterToShipClick() {
-		const coords = get(this.state.ship.getValue(), 'geom.coordinates');
+		const coords: [number, number] = get(
+			this.state.ship.getValue(),
+			'geom.coordinates'
+		);
 		if (!coords) return;
 		this.state.centerToShip$.next(coords);
 	}
