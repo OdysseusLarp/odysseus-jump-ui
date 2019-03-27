@@ -62,6 +62,19 @@ const selectedGridStyle = new Style({
 	}),
 });
 
+const projection = new Projection({
+	code: 'EPSG:3857',
+	extent: [
+		-20037508.342789244,
+		-20037508.342789244,
+		20037508.342789244,
+		20037508.342789244,
+	],
+	global: true,
+	units: 'm',
+	worldExtent: [-180, -85, 180, 85],
+});
+
 const selectedFeatureLayer = new VectorLayer({
 	source: new VectorSource({}),
 });
@@ -179,18 +192,6 @@ export class MapComponent implements OnInit, OnDestroy {
 				duration: 250,
 			},
 		});
-		const projection = new Projection({
-			code: 'EPSG:3857',
-			extent: [
-				-20037508.342789244,
-				-20037508.342789244,
-				20037508.342789244,
-				20037508.342789244,
-			],
-			global: true,
-			units: 'm',
-			worldExtent: [-180, -85, 180, 85],
-		});
 		const view = new View({
 			center: [0, 0],
 			zoom: 6,
@@ -246,7 +247,6 @@ export class MapComponent implements OnInit, OnDestroy {
 		if (this.isLoading) return;
 		this.isLoading = true;
 		const resolution = this.map.getView().getResolution();
-		const projection = 'EPSG:3857';
 		const objectUrl = layerObject
 			.getSource()
 			.getGetFeatureInfoUrl(coordinate, resolution, projection, {
