@@ -32,6 +32,11 @@ export class StateService {
 	geoEventFinished$: Subject<boolean> = new Subject();
 	unselectGrid$: Subject<boolean> = new Subject();
 	unselectObject$: Subject<boolean> = new Subject();
+	hasActiveGridScanEvent: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	hasActiveObjectScanEvent: BehaviorSubject<boolean> = new BehaviorSubject(
+		false
+	);
+	hasActiveJumpEvent: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 	// Actions kinda
 	centerToShip$: Subject<string> = new Subject();
@@ -78,6 +83,7 @@ export class StateService {
 		const updateInterval = interval(1000).pipe(startWith(0));
 		this.timestampedEvents = combineLatest(this.events, updateInterval).pipe(
 			map(([events]) => {
+				if (!events) return [];
 				// Add human readable seconds until scan completes
 				return events.map(event => ({
 					...event,
