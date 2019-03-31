@@ -22,6 +22,7 @@ import { finalize, first as firstPipe } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
 import { MapBrowserPointerEvent } from 'openlayers';
+import { SocketIoService } from '@app/services/socketio.service';
 
 const projection = new Projection({
 	code: 'EPSG:3857',
@@ -112,11 +113,16 @@ export class MapComponent implements OnInit, OnDestroy {
 	geoEventFinished$: Subscription;
 	unselectGrid$: Subscription;
 	unselectObject$: Subscription;
+	refreshMap$: Subscription;
 	clickedFeatures = [];
 	clickedGrid: any;
 	isLoading = false;
 
-	constructor(private state: StateService, private http: HttpClient) {}
+	constructor(
+		private state: StateService,
+		private http: HttpClient,
+		private socket: SocketIoService
+	) {}
 
 	ngOnInit() {
 		this.initializeMap();
@@ -222,6 +228,7 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.isGridVisible$ = this.state.isGridVisible$.subscribe(isGridVisible => {
 			this.isGridVisible = isGridVisible;
 			layerGrid.setVisible(isGridVisible);
+			layerFleet.setVisible(isGridVisible);
 		});
 		this.centerToShip$ = this.state.centerToShip$.subscribe(coords => {
 			this.map.getView().setCenter(coords);
@@ -239,6 +246,9 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.unselectObject$ = this.state.unselectObject$.subscribe(() =>
 			this.unselectFeature()
 		);
+		this.refreshMap$ = this.socket.refreshMap.subscribe(() => {
+			this.map.changed();
+		});
 	}
 
 	private getClickedFeatures(coordinate) {

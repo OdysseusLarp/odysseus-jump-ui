@@ -71,6 +71,13 @@ export class StateService {
 			this.setLogEntries([entry, ...this.log.getValue()]);
 		});
 
+		// Subscribe to deleted log entries
+		socketIoService.logEntryDeleted.subscribe(({ id }) => {
+			this.setLogEntries(
+				this.log.getValue().filter(logEntry => logEntry.id !== id)
+			);
+		});
+
 		// Parse log entries periodically to update their human readable time
 		interval(10000).subscribe(() => {
 			const logs = this.log
