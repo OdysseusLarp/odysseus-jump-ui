@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client/dist/socket.io';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
+import { JumpState } from './state.service';
 
 interface FinishedEvent {
 	success: boolean;
@@ -11,6 +12,7 @@ interface FinishedEvent {
 @Injectable()
 export class SocketIoService {
 	socket: any;
+	jumpStateSocket: any;
 	public eventAdded: Observable<api.Event>;
 	public eventUpdated: Observable<api.Event>;
 	public eventFinished: Observable<FinishedEvent>;
@@ -18,9 +20,14 @@ export class SocketIoService {
 	public logEntryDeleted: Observable<{ id: number }>;
 	public shipUpdated: Observable<api.Ship>;
 	public refreshMap: Observable<any>;
+	public jumpStateUpdated: Observable<JumpState>;
 
 	constructor() {
 		this.socket = io(environment.apiUrl);
+		this.jumpStateSocket = io.connect(
+			`${environment.apiUrl}/data`,
+			{ query: { data: '/data/ship/jump' } }
+		);
 		this.eventAdded = this.createObservable<api.Event>('eventAdded');
 		this.eventUpdated = this.createObservable<api.Event>('eventUpdated');
 		this.eventFinished = this.createObservable<FinishedEvent>('eventFinished');
@@ -29,6 +36,14 @@ export class SocketIoService {
 		this.refreshMap = this.createObservable<any>('refreshMap');
 		this.logEntryDeleted = this.createObservable<{ id: number }>(
 			'logEntryDeleted'
+		);
+		this.jumpStateUpdated = new Observable(o =>
+			this.jumpStateSocket.on(
+				'dataUpdate',
+				(_type: string, _id: string, data: JumpState) => {
+					o.next(data);
+				}
+			)
 		);
 	}
 

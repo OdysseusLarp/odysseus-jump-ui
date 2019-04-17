@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as EventApi from '@api/Event';
 import * as LogApi from '@api/Log';
+import * as DataApi from '@api/Data';
 import { getFleetId } from '@api/Fleet';
 import {
 	BehaviorSubject,
@@ -15,6 +16,31 @@ import * as moment from 'moment';
 
 export interface LogEntry extends api.LogEntry {
 	time?: string;
+}
+
+type JumpStatus =
+	| 'ready_to_prep'
+	| 'ready'
+	| 'preparation'
+	| 'prep_complete'
+	| 'jumping'
+	| 'jump_initiated'
+	| 'cooldown'
+	| 'calculating';
+export interface JumpState {
+	id?: 'jump';
+	jump_at: number;
+	last_jump: number;
+	prep_at: number;
+	safe_at: number;
+	safe_jump: boolean;
+	status: JumpStatus;
+	type?: 'ship';
+	coordinates?: string;
+	version: number;
+	created_at?: string;
+	updated_at?: string;
+	presets?: any;
 }
 
 // Maximum amount of log entries stored in state
@@ -37,6 +63,7 @@ export class StateService {
 		false
 	);
 	hasActiveJumpEvent: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	jumpState: BehaviorSubject<JumpState> = new BehaviorSubject(null);
 
 	// Actions kinda
 	centerToShip$: Subject<[number, number]> = new Subject();
@@ -46,6 +73,7 @@ export class StateService {
 		this.fetchShip();
 		this.fetchActiveEvents();
 		this.fetchShipLog();
+		this.fetchJumpState();
 
 		// React to event events sent by Socket IO
 		socketIoService.eventAdded.subscribe(event => {
@@ -76,6 +104,11 @@ export class StateService {
 			this.setLogEntries(
 				this.log.getValue().filter(logEntry => logEntry.id !== id)
 			);
+		});
+
+		// Jump state changes
+		socketIoService.jumpStateUpdated.subscribe(data => {
+			this.jumpState.next(data);
 		});
 
 		// Parse log entries periodically to update their human readable time
@@ -115,6 +148,11 @@ export class StateService {
 		const { data } = await LogApi.getLog();
 		const logs = data.map(logEntry => this.parseLogEntry(logEntry));
 		this.setLogEntries(logs);
+	}
+
+	async fetchJumpState() {
+		const { data } = await DataApi.getDataTypeId('jump', 'ship');
+		this.jumpState.next(data);
 	}
 
 	setLogEntries(logEntries) {

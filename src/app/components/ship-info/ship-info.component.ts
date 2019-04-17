@@ -11,6 +11,27 @@ interface Ship extends api.Ship {
 	position?: api.Grid;
 }
 
+export function getJumpStatus(status) {
+	switch (status) {
+		case 'ready_to_prep':
+			return 'Ready to prep';
+		case 'ready':
+			return 'Ready';
+		case 'prep_complete':
+			return 'Prep complete';
+		case 'jumping':
+			return 'Jumping';
+		case 'jump_initiated':
+			return 'Jump initiated';
+		case 'cooldown':
+			return 'On cooldown';
+		case 'calculating':
+			return 'Calculating';
+		default:
+			return 'Unknown';
+	}
+}
+
 @Component({
 	selector: 'app-ship-info',
 	templateUrl: './ship-info.component.html',
@@ -22,10 +43,12 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	eventFinished$: Subscription;
 	events$: Subscription;
 	ship$: Subscription;
+	jumpState$: Subscription;
 	events: api.Event[] = [];
 	odysseus: Ship;
 	probeCount: number;
 	formattedListItems: ListItem[] = [];
+	jumpStatus: string;
 
 	constructor(
 		private socketService: SocketIoService,
@@ -66,6 +89,14 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
 			this.generateFormattedList();
 		});
+		this.jumpState$ = this.stateService.jumpState.subscribe(state => {
+			if (!state) {
+				this.jumpStatus = undefined;
+				return;
+			}
+			this.jumpStatus = state.status;
+			this.generateFormattedList();
+		});
 	}
 
 	private showToast(str) {
@@ -89,6 +120,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 		};
 		this.formattedListItems = [
 			{ key: 'Current position', value: props.position },
+			{ key: 'Jump status', value: getJumpStatus(this.jumpStatus) },
 			{ key: 'Jump distance (sub-sector)', value: props.jumpRange },
 			{ key: 'Scan distance (sub-sector)', value: props.scanRange },
 			{ key: 'Probes left (pcs)', value: this.probeCount },
