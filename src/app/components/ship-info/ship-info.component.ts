@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketIoService } from '../../services/socketio.service';
 import { Subscription } from 'rxjs';
-import { StateService } from '../../services/state.service';
+import { StateService, JumpStatus } from '../../services/state.service';
 import { MatSnackBar } from '@angular/material';
 import { SNACKBAR_DEFAULTS } from '../../config';
 import { get } from 'lodash';
@@ -11,10 +11,12 @@ interface Ship extends api.Ship {
 	position?: api.Grid;
 }
 
-export function getJumpStatus(status) {
+export function getJumpStatus(status: JumpStatus) {
 	switch (status) {
 		case 'ready_to_prep':
 			return 'Ready to prep';
+		case 'preparation':
+			return 'Pre-jump prep';
 		case 'ready':
 			return 'Ready';
 		case 'prep_complete':
@@ -48,7 +50,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	odysseus: Ship;
 	probeCount: number;
 	formattedListItems: ListItem[] = [];
-	jumpStatus: string;
+	jumpStatus: JumpStatus;
 
 	constructor(
 		private socketService: SocketIoService,
@@ -120,9 +122,9 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 		};
 		this.formattedListItems = [
 			{ key: 'Current position', value: props.position },
-			{ key: 'Jump status', value: getJumpStatus(this.jumpStatus) },
-			{ key: 'Jump distance (sub-sector)', value: props.jumpRange },
-			{ key: 'Scan distance (sub-sector)', value: props.scanRange },
+			{ key: 'Jump drive status', value: getJumpStatus(this.jumpStatus) },
+			{ key: 'Max jump distance (sub-sector)', value: props.jumpRange },
+			{ key: 'Max scan distance (sub-sector)', value: props.scanRange },
 			{ key: 'Probes left (pcs)', value: this.probeCount },
 		];
 	}

@@ -18,7 +18,7 @@ export interface LogEntry extends api.LogEntry {
 	time?: string;
 }
 
-type JumpStatus =
+export type JumpStatus =
 	| 'ready_to_prep'
 	| 'ready'
 	| 'preparation'

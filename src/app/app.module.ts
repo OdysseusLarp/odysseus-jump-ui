@@ -18,6 +18,7 @@ import { ObjectDetailsComponent } from './components/object-details/object-detai
 import { GridDetailsComponent } from './components/grid-details/grid-details.component';
 import { ShipLogComponent } from './components/ship-log/ship-log.component';
 import { DottedListComponent } from './components/dotted-list/dotted-list.component';
+import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
 
 @NgModule({
 	declarations: [
@@ -29,6 +30,7 @@ import { DottedListComponent } from './components/dotted-list/dotted-list.compon
 		GridDetailsComponent,
 		ShipLogComponent,
 		DottedListComponent,
+		MessageDialogComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -42,6 +44,6 @@ import { DottedListComponent } from './components/dotted-list/dotted-list.compon
 	],
 	providers: [SocketIoService, StateService],
 	bootstrap: [AppComponent],
-	entryComponents: [JumpDialogComponent],
+	entryComponents: [JumpDialogComponent, MessageDialogComponent],
 })
 export class AppModule {}

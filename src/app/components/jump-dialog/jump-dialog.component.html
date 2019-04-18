@@ -1,31 +1,44 @@
 <div class="container">
-	<h2>Insert jump coordinates</h2>
-	<div *ngIf="hasActiveJumpEvent">Ship is already preparing for jump.</div>
-	<div *ngIf="!hasActiveJumpEvent">
-		<form [formGroup]="jumpForm" (ngSubmit)="onSubmit()">
-			<div>
-				<label for="subQuadrant">Sub-quadrant</label>
-				<input class="input" id="subQuadrant" formControlName="sub_quadrant" trim="blur" />
-			</div>
-			<div>
-				<label for="sector">Sector</label>
-				<input class="input" id="sector" formControlName="sector" trim="blur" />
-			</div>
-			<div>
-				<label for="subSector">Sub-sector</label>
-				<input class="input" id="subSector" formControlName="sub_sector" trim="blur" />
-			</div>
-			<div>
-				<label for="planetOrbit">Orbit</label>
-				<input class="input" id="planetOrbit" formControlName="planet_orbit" trim="blur" />
-			</div>
-		</form>
-		<button class="button block" [disabled]="!jumpForm.valid || isSubmitting" type="button" (click)="onSubmit()">
-			Jump &gt;&gt;
+	<div *ngIf="jumpStatus && jumpStatus === 'ready_to_prep'">
+		<h2>Insert jump coordinates</h2>
+		<div *ngIf="!hasActiveJumpEvent">
+			<form [formGroup]="jumpForm" (ngSubmit)="onCalculateJumpCoordinates()">
+				<div>
+					<label for="subQuadrant">Sub-quadrant</label>
+					<input class="input" id="subQuadrant" formControlName="sub_quadrant" trim="blur" />
+				</div>
+				<div>
+					<label for="sector">Sector</label>
+					<input class="input" id="sector" formControlName="sector" trim="blur" />
+				</div>
+				<div>
+					<label for="subSector">Sub-sector</label>
+					<input class="input" id="subSector" formControlName="sub_sector" trim="blur" />
+				</div>
+				<div>
+					<label for="planetOrbit">Orbit</label>
+					<input class="input" id="planetOrbit" formControlName="planet_orbit" trim="blur" />
+				</div>
+			</form>
+			<button class="button block" [disabled]="!jumpForm.valid || isSubmitting" type="button" (click)="onCalculateJumpCoordinates()">
+				CALCULATE JUMP VECTOR &gt;&gt;
+			</button>
+			<span
+				class="box-closer link"
+				(click)="this.close()"
+			></span>
+		</div>
+	</div>
+	<div *ngIf="jumpStatus && jumpStatus === 'prep_complete'">
+		<h2>Not ready for safe jump yet, stuff will break</h2>
+		<p>TODO: Add safe to jump countdown</p>
+		<button class="button block massive-button" type="button" (click)="onPerformJump()">
+			ENGAGE JUMP &gt;&gt;
 		</button>
-		<span
-			class="box-closer link"
-			(click)="this.close()"
-		></span>
+	</div>
+	<div *ngIf="jumpStatus && jumpStatus === 'ready'">
+		<button class="button block massive-button" type="button" (click)="onPerformJump()">
+			ENGAGE JUMP &gt;&gt;
+		</button>
 	</div>
 </div>
