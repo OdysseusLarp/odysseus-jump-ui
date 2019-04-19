@@ -19,6 +19,7 @@ import { GridDetailsComponent } from './components/grid-details/grid-details.com
 import { ShipLogComponent } from './components/ship-log/ship-log.component';
 import { DottedListComponent } from './components/dotted-list/dotted-list.component';
 import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
+import { StaticScreenComponent } from './components/static-screen/static-screen.component';
 
 @NgModule({
 	declarations: [
@@ -31,6 +32,7 @@ import { MessageDialogComponent } from './components/message-dialog/message-dial
 		ShipLogComponent,
 		DottedListComponent,
 		MessageDialogComponent,
+		StaticScreenComponent,
 	],
 	imports: [
 		BrowserModule,
