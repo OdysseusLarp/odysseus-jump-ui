@@ -114,6 +114,7 @@ export class MapComponent implements OnInit, OnDestroy {
 	unselectGrid$: Subscription;
 	unselectObject$: Subscription;
 	refreshMap$: Subscription;
+	zoomMap$: Subscription;
 	clickedFeatures = [];
 	clickedGrid: any;
 	isLoading = false;
@@ -248,6 +249,12 @@ export class MapComponent implements OnInit, OnDestroy {
 		);
 		this.refreshMap$ = this.socket.refreshMap.subscribe(() => {
 			this.map.changed();
+		});
+		this.zoomMap$ = this.state.zoomMap$.subscribe(zoomModifier => {
+			const currentZoom = this.map.getView().getZoom();
+			this.map
+				.getView()
+				.animate({ zoom: currentZoom + zoomModifier, duration: 100 });
 		});
 	}
 

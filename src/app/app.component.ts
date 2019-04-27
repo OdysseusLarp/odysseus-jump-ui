@@ -88,6 +88,10 @@ export class AppComponent implements OnInit {
 		});
 	}
 
+	onZoomMap(value: number) {
+		this.state.zoomMap$.next(value);
+	}
+
 	getIsEnabled() {
 		return this.isJumpUiEnabled$.getValue();
 	}

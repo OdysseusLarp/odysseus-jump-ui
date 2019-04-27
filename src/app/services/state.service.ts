@@ -69,6 +69,7 @@ export class StateService {
 
 	// Actions kinda
 	centerToShip$: Subject<[number, number]> = new Subject();
+	zoomMap$: Subject<number> = new Subject();
 
 	constructor(private socketIoService: SocketIoService) {
 		// Get initial data from API

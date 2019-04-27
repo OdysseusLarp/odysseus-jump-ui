@@ -6,6 +6,10 @@
 		<button [disabled]="jumpDialogRef" (click)="onDecodeSignalClick()">Decode signal</button>
 		<button [disabled]="jumpDialogRef" (click)="onCenterToShipClick()">Center to ship</button>
 	</div>
+	<div class="map-actions">
+		<button [disabled]="jumpDialogRef" (click)="onZoomMap(1)">+</button>
+		<button [disabled]="jumpDialogRef" (click)="onZoomMap(-1)">-</button>
+	</div>
 	<app-map></app-map>
 	<div class="right-sidebar-wrapper">
 		<app-ship-info></app-ship-info>
