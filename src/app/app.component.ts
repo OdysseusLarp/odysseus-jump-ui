@@ -19,7 +19,7 @@ export const DIALOG_SETTINGS = {
 export class AppComponent implements OnInit {
 	isGridVisible$;
 	isJumpUiEnabled$;
-	private jumpDialogRef: MatDialogRef<JumpDialogComponent>;
+	jumpDialogRef: MatDialogRef<JumpDialogComponent>;
 	constructor(public dialog: MatDialog, private state: StateService) {}
 
 	ngOnInit() {
