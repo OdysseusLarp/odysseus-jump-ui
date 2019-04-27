@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client/dist/socket.io';
+import { get } from 'lodash';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 import { JumpState } from './state.service';
@@ -9,10 +10,16 @@ interface FinishedEvent {
 	event: api.Event;
 }
 
+interface ShipStateMetadata {
+	ee_sync_enabled: true;
+	jump_ui_enabled: true;
+}
+
 @Injectable()
 export class SocketIoService {
 	socket: any;
 	jumpStateSocket: any;
+	metadataStateSocket: any;
 	public eventAdded: Observable<api.Event>;
 	public eventUpdated: Observable<api.Event>;
 	public eventFinished: Observable<FinishedEvent>;
@@ -21,12 +28,17 @@ export class SocketIoService {
 	public shipUpdated: Observable<api.Ship>;
 	public refreshMap: Observable<any>;
 	public jumpStateUpdated: Observable<JumpState>;
+	public jumpUiEnabled: Observable<boolean>;
 
 	constructor() {
 		this.socket = io(environment.apiUrl);
 		this.jumpStateSocket = io.connect(
 			`${environment.apiUrl}/data`,
 			{ query: { data: '/data/ship/jump' } }
+		);
+		this.metadataStateSocket = io.connect(
+			`${environment.apiUrl}/data`,
+			{ query: { data: '/data/ship/metadata' } }
 		);
 		this.eventAdded = this.createObservable<api.Event>('eventAdded');
 		this.eventUpdated = this.createObservable<api.Event>('eventUpdated');
@@ -45,6 +57,14 @@ export class SocketIoService {
 				}
 			)
 		);
+		this.jumpUiEnabled = new Observable(o => {
+			this.metadataStateSocket.on(
+				'dataUpdate',
+				(_type: string, _id: string, data: ShipStateMetadata) => {
+					o.next(!!get(data, 'jump_ui_enabled', true));
+				}
+			);
+		});
 	}
 
 	private createObservable<T>(event: string): Observable<T> {

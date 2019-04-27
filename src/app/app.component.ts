@@ -18,11 +18,13 @@ export const DIALOG_SETTINGS = {
 })
 export class AppComponent implements OnInit {
 	isGridVisible$;
+	isJumpUiEnabled$;
 	private jumpDialogRef: MatDialogRef<JumpDialogComponent>;
 	constructor(public dialog: MatDialog, private state: StateService) {}
 
 	ngOnInit() {
 		this.isGridVisible$ = this.state.isGridVisible$;
+		this.isJumpUiEnabled$ = this.state.isJumpUiEnabled;
 	}
 
 	onJumpClick() {
@@ -84,6 +86,10 @@ export class AppComponent implements OnInit {
 				title,
 			},
 		});
+	}
+
+	getIsEnabled() {
+		return this.isJumpUiEnabled$.getValue();
 	}
 
 	onCenterToShipClick() {

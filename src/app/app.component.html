@@ -1,5 +1,5 @@
-<!--<app-static-screen></app-static-screen>-->
-<div class="main-container">
+<app-static-screen *ngIf="!(isJumpUiEnabled$ | async)"></app-static-screen>
+<div class="main-container" [ngClass]="{ hidden: !getIsEnabled() }">
 	<div class="action-bar">
 		<button [disabled]="jumpDialogRef" (click)="onJumpClick()">Jump</button>
 		<button [disabled]="jumpDialogRef" (click)="onGridToggle()">{{ (isGridVisible$ | async) ? 'Hide' : 'Show' }} grid</button>

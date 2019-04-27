@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SocketIoService } from './socketio.service';
+import { get } from 'lodash';
 import * as moment from 'moment';
 
 export interface LogEntry extends api.LogEntry {
@@ -64,12 +65,14 @@ export class StateService {
 	);
 	hasActiveJumpEvent: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	jumpState: BehaviorSubject<JumpState> = new BehaviorSubject(null);
+	isJumpUiEnabled: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
 	// Actions kinda
 	centerToShip$: Subject<[number, number]> = new Subject();
 
 	constructor(private socketIoService: SocketIoService) {
 		// Get initial data from API
+		this.fetchShipMetadataState();
 		this.fetchShip();
 		this.fetchActiveEvents();
 		this.fetchShipLog();
@@ -110,6 +113,11 @@ export class StateService {
 		socketIoService.jumpStateUpdated.subscribe(data => {
 			this.jumpState.next(data);
 		});
+
+		// Jump UI Enabled / Disabled changes
+		socketIoService.jumpUiEnabled.subscribe(isEnabled =>
+			this.isJumpUiEnabled.next(isEnabled)
+		);
 
 		// Parse log entries periodically to update their human readable time
 		interval(10000).subscribe(() => {
@@ -153,6 +161,11 @@ export class StateService {
 	async fetchJumpState() {
 		const { data } = await DataApi.getDataTypeId('jump', 'ship');
 		this.jumpState.next(data);
+	}
+
+	async fetchShipMetadataState() {
+		const { data } = await DataApi.getDataTypeId('metadata', 'ship');
+		this.isJumpUiEnabled.next(get(data, 'jump_ui_enabled', true));
 	}
 
 	setLogEntries(logEntries) {
