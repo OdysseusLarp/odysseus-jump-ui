@@ -31,7 +31,7 @@ export class ShipLogComponent implements OnInit {
 					this.enabledLogTypes.has(<LogType>entry.type)
 				);
 				return slice(filteredEntries, 0, MAX_LOG_COUNT).sort((a, b) =>
-					moment(a.created_at).isSameOrAfter(moment(b.created_at)) ? -1 : 1
+					moment(a.created_at).isAfter(moment(b.created_at)) ? -1 : 1
 				);
 			})
 		);

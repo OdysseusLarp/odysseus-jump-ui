@@ -172,7 +172,7 @@ export class StateService {
 		// Only take the last X log entries
 		const logs = logEntries
 			.sort((a, b) =>
-				moment(a.created_at).isSameOrAfter(moment(b.created_at)) ? -1 : 1
+				moment(a.created_at).isAfter(moment(b.created_at)) ? -1 : 1
 			)
 			.filter((_, i) => i < MAX_LOG_COUNT);
 		this.log.next(logs);
@@ -181,7 +181,6 @@ export class StateService {
 	parseLogEntry(logEntry) {
 		const entry = {
 			...logEntry,
-			date: new Date(logEntry.created_at),
 			time: this.addReadableTime(logEntry),
 		};
 		return entry;
