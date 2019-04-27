@@ -1,10 +1,10 @@
 <!--<app-static-screen></app-static-screen>-->
 <div class="main-container">
 	<div class="action-bar">
-		<button (click)="onJumpClick()">Jump</button>
-		<button (click)="onGridToggle()">{{ (isGridVisible$ | async) ? 'Hide' : 'Show' }} grid</button>
-		<button (click)="onDecodeSignalClick()">Decode signal</button>
-		<button (click)="onCenterToShipClick()">Center to ship</button>
+		<button [disabled]="jumpDialogRef" (click)="onJumpClick()">Jump</button>
+		<button [disabled]="jumpDialogRef" (click)="onGridToggle()">{{ (isGridVisible$ | async) ? 'Hide' : 'Show' }} grid</button>
+		<button [disabled]="jumpDialogRef" (click)="onDecodeSignalClick()">Decode signal</button>
+		<button [disabled]="jumpDialogRef" (click)="onCenterToShipClick()">Center to ship</button>
 	</div>
 	<app-map></app-map>
 	<div class="right-sidebar-wrapper">

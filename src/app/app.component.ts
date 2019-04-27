@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
 import { MessageDialogComponent } from '@components/message-dialog/message-dialog.component';
 import { StateService, JumpStatus } from '@app/services/state.service';
@@ -18,6 +18,7 @@ export const DIALOG_SETTINGS = {
 })
 export class AppComponent implements OnInit {
 	isGridVisible$;
+	private jumpDialogRef: MatDialogRef<JumpDialogComponent>;
 	constructor(public dialog: MatDialog, private state: StateService) {}
 
 	ngOnInit() {
@@ -25,13 +26,21 @@ export class AppComponent implements OnInit {
 	}
 
 	onJumpClick() {
+		if (this.jumpDialogRef) return;
 		const jumpStatus: JumpStatus = get(
 			this.state.jumpState.getValue(),
 			'status'
 		);
 		// Initialize jump preparation
 		if (['ready_to_prep', 'ready', 'prep_complete'].includes(jumpStatus)) {
-			return this.dialog.open(JumpDialogComponent, DIALOG_SETTINGS);
+			this.jumpDialogRef = this.dialog.open(
+				JumpDialogComponent,
+				DIALOG_SETTINGS
+			);
+			this.jumpDialogRef
+				.afterClosed()
+				.subscribe(() => (this.jumpDialogRef = null));
+			return;
 		}
 		const title = 'Jump drive';
 		let message;
