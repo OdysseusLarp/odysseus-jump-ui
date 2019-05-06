@@ -60,14 +60,6 @@ export class AppComponent implements OnInit {
 				message = 'Ship is already preparing for jump.';
 				break;
 			}
-			// case 'prep_complete': {
-			// 	message = 'Jump preparation has been completed, ship will be ready to jump soon.';
-			// 	break;
-			// }
-			// case 'ready': {
-			// 	message = 'This should open a modal with a big jump button.';
-			// 	break;
-			// }
 			case 'jump_initiated': {
 				message = 'Jump has already been initiated.';
 				break;
