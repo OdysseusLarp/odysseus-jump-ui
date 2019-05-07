@@ -19,7 +19,7 @@ export interface LogEntry extends api.LogEntry {
 	time?: string;
 }
 
-export type JumpStatus =
+export type JumpStatusValue =
 	| 'ready_to_prep'
 	| 'ready'
 	| 'preparation'
@@ -27,21 +27,38 @@ export type JumpStatus =
 	| 'jumping'
 	| 'jump_initiated'
 	| 'cooldown'
-	| 'calculating';
-export interface JumpState {
+	| 'calculating'
+	| 'broken';
+
+export interface JumpStatus {
 	id?: 'jump';
 	jump_at: number;
 	last_jump: number;
 	prep_at: number;
 	safe_at: number;
 	safe_jump: boolean;
-	status: JumpStatus;
+	status: JumpStatusValue;
 	type?: 'ship';
 	coordinates?: string;
 	version: number;
 	created_at?: string;
 	updated_at?: string;
 	presets?: any;
+}
+
+export interface JumpState {
+	id?: 'jumpstate';
+	cooldown_time?: string;
+	jump_time?: string;
+	jump_drive_temp_exact?: number;
+	jump_drive_temp?: number;
+	breaking_jump?: boolean;
+	coherence?: number;
+	readyRemaining?: number;
+	readyT?: string;
+	cooldownRemaining?: number;
+	cooldownT?: string;
+	jumpT?: string;
 }
 
 // Maximum amount of log entries stored in state
@@ -64,6 +81,7 @@ export class StateService {
 		false
 	);
 	hasActiveJumpEvent: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	jumpStatus: BehaviorSubject<JumpStatus> = new BehaviorSubject(null);
 	jumpState: BehaviorSubject<JumpState> = new BehaviorSubject(null);
 	isJumpUiEnabled: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -110,15 +128,22 @@ export class StateService {
 			);
 		});
 
-		// Jump state changes
+		// Jump status changes (actual info, coordinates, etc)
+		socketIoService.jumpStatusUpdated.subscribe(data => {
+			this.jumpStatus.next(data);
+		});
+
+		// Jump state changes (human readable cooldowns etc)
 		socketIoService.jumpStateUpdated.subscribe(data => {
 			this.jumpState.next(data);
 		});
 
 		// Jump UI Enabled / Disabled changes
-		socketIoService.jumpUiEnabled.subscribe(isEnabled =>
-			this.isJumpUiEnabled.next(isEnabled)
-		);
+		socketIoService.jumpUiEnabled.subscribe(isEnabled => {
+			this.isJumpUiEnabled.next(isEnabled);
+			// Emit geoEventFinished so that map gets refreshed
+			this.geoEventFinished$.next(true);
+		});
 
 		// Parse log entries periodically to update their human readable time
 		interval(10000).subscribe(() => {
@@ -161,7 +186,7 @@ export class StateService {
 
 	async fetchJumpState() {
 		const { data } = await DataApi.getDataTypeId('jump', 'ship');
-		this.jumpState.next(data);
+		this.jumpStatus.next(data);
 	}
 
 	async fetchShipMetadataState() {

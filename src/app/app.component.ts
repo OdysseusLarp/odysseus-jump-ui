@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
 import { MessageDialogComponent } from '@components/message-dialog/message-dialog.component';
-import { StateService, JumpStatus } from '@app/services/state.service';
+import { StateService, JumpStatusValue } from '@app/services/state.service';
 import { get } from 'lodash';
 
 export const DIALOG_SETTINGS = {
@@ -29,8 +29,8 @@ export class AppComponent implements OnInit {
 
 	onJumpClick() {
 		if (this.jumpDialogRef) return;
-		const jumpStatus: JumpStatus = get(
-			this.state.jumpState.getValue(),
+		const jumpStatus: JumpStatusValue = get(
+			this.state.jumpStatus.getValue(),
 			'status'
 		);
 		// Initialize jump preparation
@@ -66,6 +66,11 @@ export class AppComponent implements OnInit {
 			}
 			case 'jumping': {
 				message = 'Jump is currently in progress.';
+				break;
+			}
+			case 'broken': {
+				message =
+					'Jump drive needs to be repaired before a jump can be initiated.';
 				break;
 			}
 			default:

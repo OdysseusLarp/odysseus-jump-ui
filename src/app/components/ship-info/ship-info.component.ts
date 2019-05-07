@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketIoService } from '../../services/socketio.service';
 import { Subscription } from 'rxjs';
-import { StateService, JumpStatus } from '../../services/state.service';
+import { StateService, JumpStatusValue } from '../../services/state.service';
 import { MatSnackBar } from '@angular/material';
 import { SNACKBAR_DEFAULTS } from '../../config';
 import { get } from 'lodash';
@@ -11,7 +11,7 @@ interface Ship extends api.Ship {
 	position?: api.Grid;
 }
 
-export function getJumpStatus(status: JumpStatus) {
+export function getJumpStatus(status: JumpStatusValue) {
 	switch (status) {
 		case 'ready_to_prep':
 			return 'Ready to prep';
@@ -29,6 +29,8 @@ export function getJumpStatus(status: JumpStatus) {
 			return 'On cooldown';
 		case 'calculating':
 			return 'Calculating';
+		case 'broken':
+			return 'Broken';
 		default:
 			return 'Unknown';
 	}
@@ -45,12 +47,13 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	eventFinished$: Subscription;
 	events$: Subscription;
 	ship$: Subscription;
+	jumpStatus$: Subscription;
 	jumpState$: Subscription;
 	events: api.Event[] = [];
 	odysseus: Ship;
 	probeCount: number;
 	formattedListItems: ListItem[] = [];
-	jumpStatus: JumpStatus;
+	jumpStatus: JumpStatusValue;
 
 	constructor(
 		private socketService: SocketIoService,
@@ -91,12 +94,16 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
 			this.generateFormattedList();
 		});
-		this.jumpState$ = this.stateService.jumpState.subscribe(state => {
+		this.jumpStatus$ = this.stateService.jumpStatus.subscribe(state => {
 			if (!state) {
 				this.jumpStatus = undefined;
 				return;
 			}
 			this.jumpStatus = state.status;
+			this.generateFormattedList();
+		});
+		this.jumpState$ = this.stateService.jumpState.subscribe(state => {
+			// Render ship info list each time jump state changes
 			this.generateFormattedList();
 		});
 	}
@@ -115,14 +122,22 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 
 	private generateFormattedList() {
 		if (!this.odysseus) return;
+		const jumpState = this.stateService.jumpState.getValue();
+		// TODO: Only show relevant cooldowns for current jump status
 		const props = {
 			position: this.odysseus.position.name,
 			jumpRange: get(this.odysseus, 'metadata.jump_range', 1),
 			scanRange: get(this.odysseus, 'metadata.scan_range', 1),
+			readyCountdown: get(jumpState, 'readyT') || 'UNKNOWN',
+			cooldownCountdown: get(jumpState, 'cooldownT') || 'UNKNOWN',
+			jumpCountdown: get(jumpState, 'jumpT') || 'UNKNOWN',
 		};
 		this.formattedListItems = [
 			{ key: 'Current position', value: props.position },
 			{ key: 'Jump drive status', value: getJumpStatus(this.jumpStatus) },
+			{ key: 'Time until safe jump', value: props.readyCountdown },
+			{ key: 'Jump drive cooldown', value: props.cooldownCountdown },
+			{ key: 'Jump drive engaging in', value: props.jumpCountdown },
 			{ key: 'Max jump distance (sub-sector)', value: props.jumpRange },
 			{ key: 'Max scan distance (sub-sector)', value: props.scanRange },
 			{ key: 'Probes left (pcs)', value: this.probeCount },

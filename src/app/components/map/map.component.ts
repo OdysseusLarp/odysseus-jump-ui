@@ -234,28 +234,37 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.centerToShip$ = this.state.centerToShip$.subscribe(coords => {
 			this.map.getView().setCenter(coords);
 		});
-		this.geoEventFinished$ = this.state.geoEventFinished$.subscribe(() => {
-			// Re-render starmap objects and fleet position after a jump
-			// TODO: Fix bug where this does nothing if the map does not have
-			// focus in the UI - this.map.getViewport().focus() did not help.
-			layerObject.getSource().changed();
-			layerFleet.getSource().changed();
-		});
+		this.geoEventFinished$ = this.state.geoEventFinished$.subscribe(() =>
+			this.refreshMap()
+		);
 		this.unselectGrid$ = this.state.unselectGrid$.subscribe(() =>
 			this.unselectGrid()
 		);
 		this.unselectObject$ = this.state.unselectObject$.subscribe(() =>
 			this.unselectFeature()
 		);
-		this.refreshMap$ = this.socket.refreshMap.subscribe(() => {
-			this.map.changed();
-		});
+		this.refreshMap$ = this.socket.refreshMap.subscribe(() =>
+			this.refreshMap()
+		);
 		this.zoomMap$ = this.state.zoomMap$.subscribe(zoomModifier => {
 			const currentZoom = this.map.getView().getZoom();
 			this.map
 				.getView()
 				.animate({ zoom: currentZoom + zoomModifier, duration: 100 });
 		});
+	}
+
+	private refreshMap() {
+		// Re-render starmap objects and fleet position after a jump
+		// TODO: Fix bug where this does nothing if the map does not have
+		// focus in the UI - this.map.getViewport().focus() did not help.
+		console.log('Manually refreshing the map');
+		layerObject.getSource().changed();
+		layerFleet.getSource().changed();
+		layerBgStar.getSource().changed();
+		this.map.changed();
+		// Might as well call map render
+		this.map.render();
 	}
 
 	private getClickedFeatures(coordinate) {
