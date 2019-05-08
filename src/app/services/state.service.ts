@@ -165,7 +165,11 @@ export class StateService {
 				}));
 			})
 		);
-		socketIoService.shipUpdated.subscribe(ship => this.ship.next(ship));
+		socketIoService.shipUpdated.subscribe(ship => {
+			// Update the map in case ship has moved
+			this.geoEventFinished$.next(true);
+			this.ship.next(ship);
+		});
 	}
 
 	async fetchActiveEvents() {

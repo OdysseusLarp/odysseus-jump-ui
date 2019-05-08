@@ -47,7 +47,7 @@ const geoJsonSettings = {
 	geometryName: 'the_geom',
 };
 
-function createLayer(layerName, visible = true) {
+function createLayer(layerName, visible = true): ImageLayer {
 	return new ImageLayer({
 		visible,
 		source: new ImageWMS({
@@ -255,16 +255,10 @@ export class MapComponent implements OnInit, OnDestroy {
 	}
 
 	private refreshMap() {
-		// Re-render starmap objects and fleet position after a jump
-		// TODO: Fix bug where this does nothing if the map does not have
-		// focus in the UI - this.map.getViewport().focus() did not help.
-		console.log('Manually refreshing the map');
-		layerObject.getSource().changed();
-		layerFleet.getSource().changed();
-		layerBgStar.getSource().changed();
-		this.map.changed();
-		// Might as well call map render
-		this.map.render();
+		// Hack to force reload of the current view from GeoServer by updating
+		// source parameters
+		const sources = [layerObject.getSource(), layerFleet.getSource()];
+		sources.forEach(s => s.updateParams({ time: Date.now() }));
 	}
 
 	private getClickedFeatures(coordinate) {
