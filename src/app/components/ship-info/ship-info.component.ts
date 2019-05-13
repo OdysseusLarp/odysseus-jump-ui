@@ -130,14 +130,12 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			scanRange: get(this.odysseus, 'metadata.scan_range', 1),
 			readyCountdown: get(jumpState, 'readyT') || 'UNKNOWN',
 			cooldownCountdown: get(jumpState, 'cooldownT') || 'UNKNOWN',
-			jumpCountdown: get(jumpState, 'jumpT') || 'UNKNOWN',
 		};
 		this.formattedListItems = [
 			{ key: 'Current position', value: props.position },
 			{ key: 'Jump drive status', value: getJumpStatus(this.jumpStatus) },
 			{ key: 'Time until safe jump', value: props.readyCountdown },
 			{ key: 'Jump drive cooldown', value: props.cooldownCountdown },
-			{ key: 'Jump drive engaging in', value: props.jumpCountdown },
 			{ key: 'Max jump distance (sub-sector)', value: props.jumpRange },
 			{ key: 'Max scan distance (sub-sector)', value: props.scanRange },
 			{ key: 'Probes left (pcs)', value: this.probeCount },
