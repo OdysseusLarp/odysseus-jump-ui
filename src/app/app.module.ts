@@ -20,6 +20,7 @@ import { ShipLogComponent } from './components/ship-log/ship-log.component';
 import { DottedListComponent } from './components/dotted-list/dotted-list.component';
 import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
 import { StaticScreenComponent } from './components/static-screen/static-screen.component';
+import { CountdownDialogComponent } from './components/countdown-dialog/countdown-dialog.component';
 
 @NgModule({
 	declarations: [
@@ -33,6 +34,7 @@ import { StaticScreenComponent } from './components/static-screen/static-screen.
 		DottedListComponent,
 		MessageDialogComponent,
 		StaticScreenComponent,
+		CountdownDialogComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -46,6 +48,10 @@ import { StaticScreenComponent } from './components/static-screen/static-screen.
 	],
 	providers: [SocketIoService, StateService],
 	bootstrap: [AppComponent],
-	entryComponents: [JumpDialogComponent, MessageDialogComponent],
+	entryComponents: [
+		JumpDialogComponent,
+		MessageDialogComponent,
+		CountdownDialogComponent,
+	],
 })
 export class AppModule {}

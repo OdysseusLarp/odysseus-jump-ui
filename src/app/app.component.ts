@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
 import { MessageDialogComponent } from '@components/message-dialog/message-dialog.component';
+import { CountdownDialogComponent } from '@components/countdown-dialog/countdown-dialog.component';
 import { StateService, JumpStatusValue } from '@app/services/state.service';
 import { get } from 'lodash';
+import { Subscription, combineLatest } from 'rxjs';
 
 export const DIALOG_SETTINGS = {
 	hasBackdrop: true,
@@ -19,12 +21,34 @@ export const DIALOG_SETTINGS = {
 export class AppComponent implements OnInit {
 	isGridVisible$;
 	isJumpUiEnabled$;
+	jumpState$: Subscription;
 	jumpDialogRef: MatDialogRef<JumpDialogComponent>;
+	countdownDialogRef: MatDialogRef<CountdownDialogComponent>;
+
 	constructor(public dialog: MatDialog, private state: StateService) {}
 
 	ngOnInit() {
 		this.isGridVisible$ = this.state.isGridVisible$;
 		this.isJumpUiEnabled$ = this.state.isJumpUiEnabled;
+
+		// Show big countdown dialog during jump_initiated
+		this.jumpState$ = combineLatest(
+			this.state.jumpState,
+			this.state.isJumpUiEnabled
+		).subscribe(([state, isEnabled]) => {
+			if (!isEnabled && this.countdownDialogRef) this.closeCountdownDialog();
+			else if (!isEnabled) return;
+			const status = get(state, 'status');
+			if (!this.countdownDialogRef && status === 'jump_initiated') {
+				this.openCountdownDialog();
+			} else if (this.countdownDialogRef && status !== 'jump_initiated') {
+				this.closeCountdownDialog();
+			}
+		});
+	}
+
+	hasActiveDialog() {
+		return !!(this.countdownDialogRef || this.jumpDialogRef);
 	}
 
 	onJumpClick() {
@@ -108,4 +132,16 @@ export class AppComponent implements OnInit {
 	}
 
 	onDecodeSignalClick() {}
+
+	private openCountdownDialog() {
+		this.countdownDialogRef = this.dialog.open(CountdownDialogComponent, {
+			...DIALOG_SETTINGS,
+			closeOnNavigation: false,
+			disableClose: true,
+		});
+	}
+
+	private closeCountdownDialog() {
+		if (this.countdownDialogRef) this.countdownDialogRef.close();
+	}
 }

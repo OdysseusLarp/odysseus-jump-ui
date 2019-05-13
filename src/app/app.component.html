@@ -1,14 +1,14 @@
 <app-static-screen *ngIf="!(isJumpUiEnabled$ | async)"></app-static-screen>
 <div class="main-container" [ngClass]="{ hidden: !getIsEnabled() }">
 	<div class="action-bar">
-		<button [disabled]="jumpDialogRef" (click)="onJumpClick()">Jump</button>
-		<button [disabled]="jumpDialogRef" (click)="onGridToggle()">{{ (isGridVisible$ | async) ? 'Hide' : 'Show' }} grid</button>
-		<button [disabled]="jumpDialogRef" (click)="onDecodeSignalClick()">Decode signal</button>
-		<button [disabled]="jumpDialogRef" (click)="onCenterToShipClick()">Center to ship</button>
+		<button [disabled]="hasActiveDialog()" (click)="onJumpClick()">Jump</button>
+		<button [disabled]="hasActiveDialog()" (click)="onGridToggle()">{{ (isGridVisible$ | async) ? 'Hide' : 'Show' }} grid</button>
+		<button [disabled]="hasActiveDialog()" (click)="onDecodeSignalClick()">Decode signal</button>
+		<button [disabled]="hasActiveDialog()" (click)="onCenterToShipClick()">Center to ship</button>
 	</div>
 	<div class="map-actions">
-		<button [disabled]="jumpDialogRef" (click)="onZoomMap(1)">+</button>
-		<button [disabled]="jumpDialogRef" (click)="onZoomMap(-1)">-</button>
+		<button [disabled]="hasActiveDialog()" (click)="onZoomMap(1)">+</button>
+		<button [disabled]="hasActiveDialog()" (click)="onZoomMap(-1)">-</button>
 	</div>
 	<app-map></app-map>
 	<div class="right-sidebar-wrapper">

@@ -1,0 +1,20 @@
+:host {
+	color: #fff;
+}
+
+.container {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	user-select: none;
+
+	h2 {
+		margin: 5px;
+	}
+
+	span {
+		font-size: 5em;
+	}
+}
