@@ -1,3 +1,5 @@
+@import '../../../scss/colors.scss';
+
 .boxed {
 	min-width: 150px;
 	padding-right: 8px;
@@ -73,16 +75,16 @@ span.circle {
 }
 
 .SUCCESS {
-	background: #34df00;
+	background: $success-color;
 }
 .WARNING {
-	background: #dfdf00;
+	background: $warning-color;
 }
 .INFO {
-	background: #0083df;
+	background: $info-color;
 }
 .ERROR {
-	background: #df0024;
+	background: $error-color;
 }
 
 .box-closer:after {
