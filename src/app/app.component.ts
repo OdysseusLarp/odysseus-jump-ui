@@ -58,7 +58,11 @@ export class AppComponent implements OnInit {
 			'status'
 		);
 		// Initialize jump preparation
-		if (['ready_to_prep', 'ready', 'prep_complete'].includes(jumpStatus)) {
+		if (
+			['ready_to_prep', 'calculating', 'ready', 'prep_complete'].includes(
+				jumpStatus
+			)
+		) {
 			this.jumpDialogRef = this.dialog.open(
 				JumpDialogComponent,
 				DIALOG_SETTINGS
@@ -76,12 +80,8 @@ export class AppComponent implements OnInit {
 					'Jump drive is on cooldown. Jumping is not possible in this state.';
 				break;
 			}
-			case 'calculating': {
-				message = 'Jump coordinates are currently being calculated.';
-				break;
-			}
 			case 'preparation': {
-				message = 'Ship is already preparing for jump.';
+				message = 'Jump drive preparation configuration sent to engineering';
 				break;
 			}
 			case 'jump_initiated': {
@@ -139,6 +139,9 @@ export class AppComponent implements OnInit {
 			closeOnNavigation: false,
 			disableClose: true,
 		});
+		this.countdownDialogRef
+			.afterClosed()
+			.subscribe(() => (this.countdownDialogRef = null));
 	}
 
 	private closeCountdownDialog() {

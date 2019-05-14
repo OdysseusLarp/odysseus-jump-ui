@@ -36,3 +36,12 @@ form {
 .massive-button {
 	font-size: 3em;
 }
+
+.button-abort {
+	background: #660200;
+	border: 2px solid #c70300;
+}
+
+.button-abort:hover {
+	background: #ff0b03 !important;
+}

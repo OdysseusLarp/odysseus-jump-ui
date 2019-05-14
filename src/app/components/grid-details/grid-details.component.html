@@ -9,7 +9,7 @@
 			type="button"
 			[ngClass]="{ 'button-in-progress': isScanning }"
 			(click)="scanGrid()"
-			[disabled]="!canBeScanned || isScanning || probeCount < 1">
+			[disabled]="!canBeScanned || isScanning || probeCount < 1 || (jumpStatus$ | async) === 'jump_initiated'">
 			<span *ngIf="isScanning">
 				Probe is scanning {{ properties?.name }} (ETA {{ getEventOccursSeconds(scanEvent) }} seconds)
 			</span>

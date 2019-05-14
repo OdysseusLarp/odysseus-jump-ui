@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { StateService } from '@app/services/state.service';
+import { Subscription, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { StateService, JumpStatusValue } from '@app/services/state.service';
 import { getFeatureProperties } from '@components/map/map.component';
 import { putEvent } from '@api/Event';
 import { get, pick, set } from 'lodash';
@@ -26,8 +27,8 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	isScanning = false;
 	isDiscovered: boolean;
 	scanEvent: api.Event;
-	jumpEvent: api.Event;
 	formattedListItems: ListItem[] = [];
+	jumpStatus$: Observable<JumpStatusValue>;
 
 	constructor(private state: StateService, private snackBar: MatSnackBar) {}
 
@@ -48,28 +49,13 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 		this.events$ = this.state.timestampedEvents.subscribe(events => {
 			const gridId = get(this.selectedGrid, 'properties.id');
 			if (!gridId) return;
-			const { sector, sub_quadrant, sub_sector } = this.selectedGrid.properties;
 			const scanEvent = events
 				.filter(event => event.type === 'SCAN_GRID')
 				.find(event => get(event, 'metadata.target') === gridId);
-			const jumpEvent = events
-				.filter(event => event.type === 'JUMP')
-				.find(event => {
-					const target = get(event, 'metadata', {});
-					return (
-						target.sector === sector &&
-						target.sub_quadrant === sub_quadrant &&
-						target.sub_sector === sub_sector
-					);
-				});
 			if (scanEvent) this.setScanEvent(scanEvent);
 			else if (!scanEvent && this.scanEvent) this.finishScanEvent();
-			if (jumpEvent) this.jumpEvent = jumpEvent;
-			else if (!jumpEvent && this.jumpEvent) {
-				this.jumpEvent = undefined;
-				this.setIsDiscovered();
-			}
 		});
+		this.jumpStatus$ = this.state.jumpStatus.pipe(map(status => status.status));
 	}
 
 	private resetValues() {

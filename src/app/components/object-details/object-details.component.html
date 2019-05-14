@@ -17,13 +17,14 @@
 		scanned.
 	</div>
 	<!-- Actions -->
+	<h1>{{ jumpStatus$ | async }}</h1>
 	<div>
 		<button
 			type="button"
 			class="button block"
 			*ngIf="feature && !feature.properties.is_scanned"
 			[ngClass]="{ 'button-in-progress': isScanning }"
-			[disabled]="isScanning"
+			[disabled]="isScanning || (jumpStatus$ | async) === 'jump_initiated'"
 			(click)="onSendProbeClick()"
 		>
 			<span *ngIf="isScanning">

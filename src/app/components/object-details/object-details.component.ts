@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { StateService } from '@app/services/state.service';
+import { Subscription, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { StateService, JumpStatusValue } from '@app/services/state.service';
 import { getFeatureProperties } from '@components/map/map.component';
 import { get, set, pick, capitalize } from 'lodash';
 import * as moment from 'moment';
@@ -20,6 +21,7 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	isScanning = false;
 	scanEvent: api.Event;
 	formattedListItems: ListItem[] = [];
+	jumpStatus$: Observable<JumpStatusValue>;
 
 	constructor(private state: StateService) {}
 
@@ -39,6 +41,7 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 			if (scanEvent) this.setScanEvent(scanEvent);
 			else if (!scanEvent && this.scanEvent) this.finishScanEvent();
 		});
+		this.jumpStatus$ = this.state.jumpStatus.pipe(map(status => status.status));
 	}
 
 	private setScanEvent(event) {

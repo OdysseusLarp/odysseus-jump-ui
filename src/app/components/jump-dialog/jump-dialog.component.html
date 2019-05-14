@@ -1,7 +1,7 @@
 <div class="container">
 	<div *ngIf="jumpStatus && jumpStatus === 'ready_to_prep'">
 		<h2>Insert jump coordinates</h2>
-		<div *ngIf="!hasActiveJumpEvent">
+		<div>
 			<form [formGroup]="jumpForm" (ngSubmit)="onCalculateJumpCoordinates()">
 				<div>
 					<label for="subQuadrant">Sub-quadrant</label>
@@ -39,6 +39,11 @@
 	<div *ngIf="jumpStatus && jumpStatus === 'ready'">
 		<button class="button block massive-button" type="button" (click)="onPerformJump()">
 			ENGAGE JUMP &gt;&gt;
+		</button>
+	</div>
+	<div *ngIf="jumpStatus && jumpStatus === 'calculating'">
+		<button class="button block massive-button button-abort" type="button" (click)="onCancelJump()">
+			ABORT COORDINATE CALCULATION
 		</button>
 	</div>
 </div>

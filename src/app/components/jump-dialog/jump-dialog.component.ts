@@ -16,10 +16,8 @@ import { SNACKBAR_DEFAULTS } from '../../config';
 	styleUrls: ['./jump-dialog.component.scss'],
 })
 export class JumpDialogComponent implements OnInit, OnDestroy {
-	event$: Subscription;
 	jumpStatus$: Subscription;
 	jumpForm: FormGroup;
-	hasActiveJumpEvent = false;
 	isSubmitting = false;
 	jumpStatus: JumpStatusValue;
 
@@ -31,16 +29,12 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.buildForm();
-		this.event$ = this.state.events.subscribe(events => {
-			this.hasActiveJumpEvent = !!events.find(e => e.type === 'JUMP');
-		});
 		this.jumpStatus$ = this.state.jumpStatus.subscribe(state => {
 			this.jumpStatus = get(state, 'status');
 		});
 	}
 
 	ngOnDestroy() {
-		this.event$.unsubscribe();
 		this.jumpStatus$.unsubscribe();
 	}
 
@@ -79,6 +73,26 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 			.then(res => {
 				console.log('Jump initiated =>', res);
 				this.snackBar.open('Jump initiated', null, SNACKBAR_DEFAULTS);
+			})
+			.catch(err => {
+				const message = get(err, 'data.body.error', '');
+				this.snackBar.open(`Error: ${message}`, null, SNACKBAR_DEFAULTS);
+			});
+		this.close();
+	}
+
+	onCancelJump() {
+		if (this.isSubmitting || this.jumpStatus !== 'calculating') return;
+		DataApi.patchDataTypeId('jump', 'ship', {
+			status: 'ready_to_prep',
+			version: this.state.jumpStatus.getValue().version,
+		})
+			.then(res => {
+				this.snackBar.open(
+					'Coordinate calculation aborted',
+					null,
+					SNACKBAR_DEFAULTS
+				);
 			})
 			.catch(err => {
 				const message = get(err, 'data.body.error', '');

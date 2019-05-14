@@ -28,12 +28,18 @@ export function getJumpStatus(status: JumpStatusValue) {
 		case 'cooldown':
 			return 'On cooldown';
 		case 'calculating':
-			return 'Calculating';
+			return 'Calculating coordinates';
 		case 'broken':
 			return 'Broken';
 		default:
 			return 'Unknown';
 	}
+}
+
+export function getJumpCoordinates(data) {
+	const { sub_quadrant, sector, sub_sector } = get(data, 'coordinates', {});
+	// TODO: add planet orbit if available
+	return `${sub_quadrant}-${sector}-${sub_sector}`;
 }
 
 @Component({
@@ -130,15 +136,36 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			scanRange: get(this.odysseus, 'metadata.scan_range', 1),
 			readyCountdown: get(jumpState, 'readyT') || 'UNKNOWN',
 			cooldownCountdown: get(jumpState, 'cooldownT') || 'UNKNOWN',
+			jumpTarget: getJumpCoordinates(this.stateService.jumpStatus.getValue()),
 		};
+
 		this.formattedListItems = [
 			{ key: 'Current position', value: props.position },
 			{ key: 'Jump drive status', value: getJumpStatus(this.jumpStatus) },
 			{ key: 'Time until safe jump', value: props.readyCountdown },
-			{ key: 'Jump drive cooldown', value: props.cooldownCountdown },
 			{ key: 'Max jump distance (sub-sector)', value: props.jumpRange },
 			{ key: 'Max scan distance (sub-sector)', value: props.scanRange },
 			{ key: 'Probes left (pcs)', value: this.probeCount },
 		];
+		if (['broken', 'cooldown', 'ready_to_prep'].includes(this.jumpStatus)) {
+			this.formattedListItems.splice(3, 0, {
+				key: 'Jump drive cooldown',
+				value: props.cooldownCountdown,
+			});
+		} else if (
+			[
+				'calculating',
+				'preparation',
+				'prep_complete',
+				'ready',
+				'jump_initiated',
+				'jumping',
+			].includes(this.jumpStatus)
+		) {
+			this.formattedListItems.splice(2, 0, {
+				key: 'Jump drive target',
+				value: props.jumpTarget,
+			});
+		}
 	}
 }
