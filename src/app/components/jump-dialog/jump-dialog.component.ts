@@ -2,11 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StateService, JumpStatusValue } from '../../services/state.service';
 import { Subscription } from 'rxjs';
-import { putEvent } from '@api/Event';
 import { postFleetIdJumpValidate } from '@api/Fleet';
 import * as DataApi from '@api/Data';
-import * as moment from 'moment';
-import { pickBy, get } from 'lodash';
+import { pickBy, get, startCase, toLower } from 'lodash';
 import { MatDialogRef, MatSnackBar } from '@angular/material';
 import { SNACKBAR_DEFAULTS } from '../../config';
 
@@ -41,7 +39,9 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 	async onCalculateJumpCoordinates() {
 		if (this.isSubmitting) return;
 		this.isSubmitting = true;
-		const jumpCoordinates = pickBy(this.jumpForm.value, Boolean);
+		const jumpCoordinates = this.formatJumpCoordinates(
+			pickBy(this.jumpForm.value, Boolean)
+		);
 		const { data } = await this.validateJumpCoordinates(jumpCoordinates);
 		if (!data.isValid) {
 			const message = get(data, 'message');
@@ -61,6 +61,16 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 			this.isSubmitting = false;
 			this.close();
 		});
+	}
+
+	private formatJumpCoordinates(jumpCoordinates) {
+		return {
+			...jumpCoordinates,
+			sub_quadrant: startCase(
+				toLower(get(jumpCoordinates, 'sub_quadrant', ''))
+			).replace(' ', '-'),
+			sector: get(jumpCoordinates, 'sector', '').toUpperCase(),
+		};
 	}
 
 	onPerformJump() {
