@@ -1,3 +1,5 @@
+@import '../../../scss/colors.scss';
+
 :host {
 	color: #fff;
 }
@@ -11,4 +13,17 @@
 	top: -35px;
 	right: -20px;
 	font-size: 1.5em;
+}
+
+h2.INFO {
+	color: $info-color;
+}
+h2.WARNING {
+	color: $warning-color;
+}
+h2.ERROR {
+	color: $error-color;
+}
+h2.SUCCESS {
+	color: $success-color;
 }

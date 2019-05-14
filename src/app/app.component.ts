@@ -6,6 +6,8 @@ import { CountdownDialogComponent } from '@components/countdown-dialog/countdown
 import { StateService, JumpStatusValue } from '@app/services/state.service';
 import { get } from 'lodash';
 import { Subscription, combineLatest } from 'rxjs';
+import { SocketIoService } from './services/socketio.service';
+import { filter } from 'rxjs/operators';
 
 export const DIALOG_SETTINGS = {
 	hasBackdrop: true,
@@ -25,7 +27,11 @@ export class AppComponent implements OnInit {
 	jumpDialogRef: MatDialogRef<JumpDialogComponent>;
 	countdownDialogRef: MatDialogRef<CountdownDialogComponent>;
 
-	constructor(public dialog: MatDialog, private state: StateService) {}
+	constructor(
+		public dialog: MatDialog,
+		private state: StateService,
+		private socketService: SocketIoService
+	) {}
 
 	ngOnInit() {
 		this.isGridVisible$ = this.state.isGridVisible$;
@@ -45,6 +51,17 @@ export class AppComponent implements OnInit {
 				this.closeCountdownDialog();
 			}
 		});
+
+		// Subscribe to new log entries that have metadata.showPopup === true
+		// and show that log entry in a MessageDialogComponent
+		this.socketService.logEntryAdded
+			.pipe(filter(logEntry => get(logEntry, 'metadata.showPopup') === true))
+			.subscribe(({ type, message }) => {
+				this.dialog.open(MessageDialogComponent, {
+					...DIALOG_SETTINGS,
+					data: { message, type },
+				});
+			});
 	}
 
 	hasActiveDialog() {

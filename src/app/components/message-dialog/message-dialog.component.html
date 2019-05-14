@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>{{ data.title }}</h2>
+  <h2 [class]="data.type">{{ data.title || data.type }}</h2>
   {{ data.message }}
   <span
   class="box-closer link"
