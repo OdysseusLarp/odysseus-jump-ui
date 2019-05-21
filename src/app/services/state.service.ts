@@ -155,7 +155,13 @@ export class StateService {
 
 		// Current event with added 'occurs_at' field
 		const updateInterval = interval(1000).pipe(startWith(0));
-		this.timestampedEvents = combineLatest(this.events, updateInterval).pipe(
+		this.timestampedEvents = combineLatest(
+			this.events,
+			updateInterval,
+			// Also emit when grid / starmap object selection changes to update instantly
+			this.selectedGrid$,
+			this.selectedFeature$
+		).pipe(
 			map(([events]) => {
 				if (!events) return [];
 				// Add human readable seconds until scan completes
