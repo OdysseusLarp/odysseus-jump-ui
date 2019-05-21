@@ -34,8 +34,9 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.selectedGrid$ = this.state.selectedGrid$.subscribe(feat => {
+			this.resetValues();
 			this.selectedGrid = feat;
-			if (!feat) return this.resetValues();
+			if (!feat) return;
 			this.setCanBeScanned(feat);
 			const props = getFeatureProperties(feat);
 			this.properties = props;
@@ -52,8 +53,11 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			const scanEvent = events
 				.filter(event => event.type === 'SCAN_GRID')
 				.find(event => get(event, 'metadata.target') === gridId);
-			if (scanEvent) this.setScanEvent(scanEvent);
-			else if (!scanEvent && this.scanEvent) this.finishScanEvent();
+			const isSameGrid = gridId === get(scanEvent, 'metadata.target');
+			if (scanEvent && isSameGrid) this.setScanEvent(scanEvent);
+			else if (!scanEvent && this.scanEvent && isSameGrid) {
+				this.finishScanEvent();
+			}
 		});
 		this.jumpStatus$ = this.state.jumpStatus.pipe(map(status => status.status));
 	}

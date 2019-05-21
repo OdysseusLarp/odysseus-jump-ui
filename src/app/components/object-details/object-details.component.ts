@@ -27,7 +27,9 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.selectedFeature$ = this.state.selectedFeature$.subscribe(feat => {
+			this.resetValues();
 			this.feature = feat;
+			if (!this.feature) return;
 			const props = getFeatureProperties(feat);
 			this.properties = props;
 			this.generateFormattedList();
@@ -38,10 +40,18 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 			const scanEvent = events
 				.filter(event => event.type === 'SCAN_OBJECT')
 				.find(event => get(event, 'metadata.target') === featureId);
-			if (scanEvent) this.setScanEvent(scanEvent);
-			else if (!scanEvent && this.scanEvent) this.finishScanEvent();
+			const isSameObject = featureId === get(scanEvent, 'metadata.target');
+			if (scanEvent && isSameObject) this.setScanEvent(scanEvent);
+			else if (!scanEvent && this.scanEvent && isSameObject)
+				this.finishScanEvent();
 		});
 		this.jumpStatus$ = this.state.jumpStatus.pipe(map(status => status.status));
+	}
+
+	private resetValues() {
+		this.isScanning = false;
+		this.properties = {};
+		this.formattedListItems = [];
 	}
 
 	private setScanEvent(event) {
@@ -62,7 +72,6 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	}
 
 	onSendProbeClick() {
-		console.log('Sending probe to', this.feature);
 		const id = get(this.feature, 'properties.id');
 		const scanTime = moment()
 			.add(30, 'seconds') // 30 second scan time hardcoded for testing
