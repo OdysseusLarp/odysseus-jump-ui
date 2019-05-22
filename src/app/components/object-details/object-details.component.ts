@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { StateService, JumpStatusValue } from '@app/services/state.service';
 import { getFeatureProperties } from '@components/map/map.component';
 import { get, set, pick, capitalize } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import { putEvent } from '@api/Event';
 import { ListItem } from '../dotted-list/dotted-list.component';
 

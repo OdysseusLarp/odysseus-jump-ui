@@ -6,16 +6,10 @@
     </div>
     <app-dotted-list [items]="formattedListItems"></app-dotted-list>
   </div>
-  <div *ngIf="events.length">
+  <div *ngIf="events.length && isDebugEnabled">
     <h2>Active events ({{ events.length }})</h2>
       <p *ngFor="let event of events; let i = index">
           {{ event.type }} taking place in {{ event.occurs_in_seconds }} seconds
       </p>
   </div>
-  <!-- testing -->
-  <!--
-  <button class="button button-in-progress block">
-    Some random button here
-  </button>
-  -->
 </div>

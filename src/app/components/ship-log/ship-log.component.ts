@@ -3,7 +3,7 @@ import { StateService, LogEntry } from '@app/services/state.service';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { slice } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 
 type LogType = 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
 

@@ -13,7 +13,8 @@ import {
 import { map, startWith } from 'rxjs/operators';
 import { SocketIoService } from './socketio.service';
 import { get } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
+import queryString from 'query-string';
 
 export interface LogEntry extends api.LogEntry {
 	time?: string;
@@ -84,6 +85,10 @@ export class StateService {
 	jumpStatus: BehaviorSubject<JumpStatus> = new BehaviorSubject(null);
 	jumpState: BehaviorSubject<JumpState> = new BehaviorSubject(null);
 	isJumpUiEnabled: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+	// Debug mode
+	isDebugEnabled =
+		get(queryString.parse(document.location.search), 'debug') === 'true';
 
 	// Actions kinda
 	centerToShip$: Subject<[number, number]> = new Subject();

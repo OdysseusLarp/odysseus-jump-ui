@@ -60,6 +60,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	probeCount: number;
 	formattedListItems: ListItem[] = [];
 	jumpStatus: JumpStatusValue;
+	isDebugEnabled = false;
 
 	constructor(
 		private socketService: SocketIoService,
@@ -112,6 +113,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			// Render ship info list each time jump state changes
 			this.generateFormattedList();
 		});
+		this.isDebugEnabled = this.stateService.isDebugEnabled;
 	}
 
 	private showToast(str) {

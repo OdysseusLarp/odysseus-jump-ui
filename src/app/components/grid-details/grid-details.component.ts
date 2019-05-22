@@ -6,7 +6,7 @@ import { getFeatureProperties } from '@components/map/map.component';
 import { putEvent } from '@api/Event';
 import { get, pick, set } from 'lodash';
 import { ListItem } from '../dotted-list/dotted-list.component';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MatSnackBar } from '@angular/material';
 import { SNACKBAR_DEFAULTS } from '../../config';
 
