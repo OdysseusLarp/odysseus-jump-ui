@@ -44,6 +44,12 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			this.generateFormattedList();
 		});
 		this.ship$ = this.state.ship.subscribe(ship => {
+			const shipGridId = get(ship, 'position.id');
+			const selectedGridId = get(this.selectedGrid, 'properties.id');
+			// This should trigger if Odysseus jumps to the currently selected grid
+			if (shipGridId && shipGridId === selectedGridId && !this.isDiscovered) {
+				this.setIsDiscovered();
+			}
 			this.setCanBeScanned(this.selectedGrid);
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
 		});
