@@ -3,9 +3,9 @@
 	<div id="popup-content" #popupContent>
 		<ul>
 			<li *ngFor="let feat of clickedFeatures; let i = index">
-				<span class="link" (click)="this.selectFeature(feat)"
+				<span class="link" [ngClass]="{ 'is-scanned': feat.properties.is_scanned }"(click)="this.selectFeature(feat)"
 					>{{ feat.properties.name_generated }} ({{
-						feat.properties.category
+						feat.properties.category || feat.properties.celestial_body
 					}})</span
 				>
 				<hr *ngIf="i + 1 !== clickedFeatures.length"/>
