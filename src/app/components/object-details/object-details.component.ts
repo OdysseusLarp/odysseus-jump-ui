@@ -99,7 +99,9 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	}
 
 	getAtmosphereString() {
-		if (get(this.feature, 'properties.celestial_body') === 'star') return '';
+		const celestialBody = get(this.feature, 'properties.celestial_body');
+		if (['star', 'jump point', 'celestial station'].includes(celestialBody))
+			return '';
 		const str = get(this.feature, 'properties.atmosphere');
 		return `Components of atmosphere in order of % amount: ${str}.`;
 	}
