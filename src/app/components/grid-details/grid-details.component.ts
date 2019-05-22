@@ -60,8 +60,10 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 				.filter(event => event.type === 'SCAN_GRID')
 				.find(event => get(event, 'metadata.target') === gridId);
 			const isSameGrid = gridId === get(scanEvent, 'metadata.target');
+			const isCurrentEventSameGrid =
+				gridId === get(this.scanEvent, 'metadata.target');
 			if (scanEvent && isSameGrid) this.setScanEvent(scanEvent);
-			else if (!scanEvent && this.scanEvent && isSameGrid) {
+			else if (!scanEvent && this.scanEvent && isCurrentEventSameGrid) {
 				this.finishScanEvent();
 			}
 		});

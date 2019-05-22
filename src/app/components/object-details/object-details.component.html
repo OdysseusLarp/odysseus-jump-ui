@@ -23,13 +23,16 @@
 			class="button block"
 			*ngIf="feature && !feature.properties.is_scanned"
 			[ngClass]="{ 'button-in-progress': isScanning }"
-			[disabled]="isScanning || (jumpStatus$ | async) === 'jump_initiated'"
+			[disabled]="isScanning || (jumpStatus$ | async) === 'jump_initiated' || hasScanEvents"
 			(click)="onSendProbeClick()"
 		>
 			<span *ngIf="isScanning">
 				Scanning {{ feature?.properties.name_generated }} (ETA {{ scanEvent.occurs_in_seconds }} seconds)
 			</span>
-			<span *ngIf="!isScanning">
+			<span *ngIf="!isScanning && hasScanEvents">
+				Another target is already being scanned
+			</span>
+			<span *ngIf="!isScanning && !hasScanEvents">
 				Scan {{ feature?.properties.name_generated }}
 			</span>
 		</button>

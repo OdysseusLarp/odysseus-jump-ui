@@ -22,6 +22,7 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	scanEvent: api.Event;
 	formattedListItems: ListItem[] = [];
 	jumpStatus$: Observable<JumpStatusValue>;
+	hasScanEvents = false;
 
 	constructor(private state: StateService) {}
 
@@ -36,13 +37,17 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 		});
 		this.events$ = this.state.timestampedEvents.subscribe(events => {
 			const featureId = get(this.feature, 'properties.id');
+			const scanEvents = events.filter(event => event.type === 'SCAN_OBJECT');
+			this.hasScanEvents = scanEvents.length > 0;
 			if (!featureId) return;
-			const scanEvent = events
-				.filter(event => event.type === 'SCAN_OBJECT')
-				.find(event => get(event, 'metadata.target') === featureId);
+			const scanEvent = scanEvents.find(
+				event => get(event, 'metadata.target') === featureId
+			);
 			const isSameObject = featureId === get(scanEvent, 'metadata.target');
+			const isCurrentScanSameObject =
+				featureId === get(this.scanEvent, 'metadata.target');
 			if (scanEvent && isSameObject) this.setScanEvent(scanEvent);
-			else if (!scanEvent && this.scanEvent && isSameObject)
+			else if (!scanEvent && this.scanEvent && isCurrentScanSameObject)
 				this.finishScanEvent();
 		});
 		this.jumpStatus$ = this.state.jumpStatus.pipe(map(status => status.status));
@@ -72,6 +77,7 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 	}
 
 	onSendProbeClick() {
+		if (this.hasScanEvents) return;
 		const id = get(this.feature, 'properties.id');
 		const scanTime = moment()
 			.add(30, 'seconds') // 30 second scan time hardcoded for testing
