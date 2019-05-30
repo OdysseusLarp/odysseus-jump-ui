@@ -21,6 +21,7 @@ import { DottedListComponent } from './components/dotted-list/dotted-list.compon
 import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
 import { StaticScreenComponent } from './components/static-screen/static-screen.component';
 import { CountdownDialogComponent } from './components/countdown-dialog/countdown-dialog.component';
+import { FleetDetailsComponent } from './components/fleet-details/fleet-details.component';
 
 @NgModule({
 	declarations: [
@@ -35,6 +36,7 @@ import { CountdownDialogComponent } from './components/countdown-dialog/countdow
 		MessageDialogComponent,
 		StaticScreenComponent,
 		CountdownDialogComponent,
+		FleetDetailsComponent,
 	],
 	imports: [
 		BrowserModule,

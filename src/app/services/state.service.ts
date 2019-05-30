@@ -74,9 +74,11 @@ export class StateService {
 	isGridVisible$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 	selectedFeature$: BehaviorSubject<any> = new BehaviorSubject(null);
 	selectedGrid$: BehaviorSubject<any> = new BehaviorSubject(null);
+	selectedFleet$: BehaviorSubject<any> = new BehaviorSubject(null);
 	geoEventFinished$: Subject<boolean> = new Subject();
 	unselectGrid$: Subject<boolean> = new Subject();
 	unselectObject$: Subject<boolean> = new Subject();
+	unselectFleet$: Subject<boolean> = new Subject();
 	hasActiveGridScanEvent: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	hasActiveObjectScanEvent: BehaviorSubject<boolean> = new BehaviorSubject(
 		false

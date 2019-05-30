@@ -20,7 +20,7 @@ import { StateService } from '@app/services/state.service';
 import { Subscription, zip } from 'rxjs';
 import { finalize, first as firstPipe } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { get, camelCase, mapKeys, omitBy, first } from 'lodash';
+import { get, camelCase, mapKeys, omitBy, first, pick } from 'lodash';
 import { MapBrowserPointerEvent } from 'openlayers';
 import { SocketIoService } from '@app/services/socketio.service';
 
@@ -41,10 +41,6 @@ const commonLayerSettings = {
 	url: `${environment.geoserverUrl}/wms`,
 	serverType: 'geoserver',
 	projection,
-};
-
-const geoJsonSettings = {
-	geometryName: 'the_geom',
 };
 
 function createLayer(layerName, visible = true): ImageLayer {
@@ -113,9 +109,11 @@ export class MapComponent implements OnInit, OnDestroy {
 	geoEventFinished$: Subscription;
 	unselectGrid$: Subscription;
 	unselectObject$: Subscription;
+	unselectFleet$: Subscription;
 	refreshMap$: Subscription;
 	zoomMap$: Subscription;
 	clickedFeatures = [];
+	clickedFleet: any;
 	clickedGrid: any;
 	isLoading = false;
 
@@ -133,6 +131,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.isGridVisible$.unsubscribe();
+		this.unselectFleet$.unsubscribe();
 	}
 
 	closePopup(e?) {
@@ -141,14 +140,26 @@ export class MapComponent implements OnInit, OnDestroy {
 	}
 
 	selectFeature(feat) {
+		this.state.selectedFleet$.next(null);
 		this.state.selectedFeature$.next(feat);
 		this.renderSelectedFeature(feat);
 	}
 
-	unselectFeature() {
-		this.closePopup();
+	unselectFeature(closePopup = false) {
+		if (closePopup) this.closePopup();
 		selectedFeatureLayer.getSource().clear();
 		this.state.selectedFeature$.next(null);
+	}
+
+	selectFleet(fleetData) {
+		selectedFeatureLayer.getSource().clear();
+		this.state.selectedGrid$.next(null);
+		this.unselectFeature(false);
+		this.state.selectedFleet$.next(fleetData);
+	}
+
+	unselectFleet() {
+		this.state.selectedFleet$.next(null);
 	}
 
 	selectGrid(feat) {
@@ -243,6 +254,9 @@ export class MapComponent implements OnInit, OnDestroy {
 		this.unselectObject$ = this.state.unselectObject$.subscribe(() =>
 			this.unselectFeature()
 		);
+		this.unselectFleet$ = this.state.unselectFleet$.subscribe(() =>
+			this.unselectFleet()
+		);
 		this.refreshMap$ = this.socket.refreshMap.subscribe(() =>
 			this.refreshMap()
 		);
@@ -265,13 +279,16 @@ export class MapComponent implements OnInit, OnDestroy {
 		if (this.isLoading) return;
 		this.isLoading = true;
 		const resolution = this.map.getView().getResolution();
-		const objectUrl = layerObject
-			.getSource()
-			.getGetFeatureInfoUrl(coordinate, resolution, projection, {
-				INFO_FORMAT: 'application/json',
-				FEATURE_COUNT: 100,
-				BUFFER: 15,
-			});
+		const getUrl = layer =>
+			layer
+				.getSource()
+				.getGetFeatureInfoUrl(coordinate, resolution, projection, {
+					INFO_FORMAT: 'application/json',
+					FEATURE_COUNT: 100,
+					BUFFER: 15,
+				});
+		const objectUrl = getUrl(layerObject);
+		const fleetUrl = getUrl(layerFleet);
 		const requests = [];
 		if (objectUrl) requests.push(this.http.get(objectUrl));
 		const gridUrl = layerGridInfo
@@ -286,21 +303,57 @@ export class MapComponent implements OnInit, OnDestroy {
 			});
 		if (this.isGridVisible && gridUrl) {
 			requests.push(this.http.get(gridUrl));
+			if (this.isGridVisible && fleetUrl)
+				requests.push(this.http.get(fleetUrl));
 		}
 		zip(...requests)
 			.pipe(finalize(() => (this.isLoading = false)))
 			.subscribe(
-				([objectRes, gridRes]) => {
+				([objectRes, gridRes, fleetRes]) => {
+					// Clicked fleet
+					const fleetProps = get(fleetRes, 'features[0].properties');
+					let fleetData;
+					if (fleetProps) {
+						fleetData = {
+							...pick(fleetProps, ['count_civilian', 'count_military']),
+							ships: JSON.parse(fleetProps.ships),
+						};
+						this.clickedFleet = fleetData;
+					} else {
+						this.clickedFleet = null;
+						this.unselectFleet();
+					}
+
+					// Clicked object(s)
 					if (objectRes) {
 						this.clickedFeatures = get(objectRes, 'features', []);
-						if (this.clickedFeatures.length === 1) {
+						// If we only have one object and no fleet data, display the object
+						if (this.clickedFeatures.length === 1 && !fleetData) {
 							this.selectFeature(this.clickedFeatures[0]);
 							this.closePopup();
-						} else if (this.clickedFeatures.length > 1)
+							// If we have more than one object or 1 object and fleetData,
+							// show the selection popup
+						} else if (
+							this.clickedFeatures.length > 1 ||
+							(this.clickedFeatures.length === 1 && fleetData)
+						) {
 							this.overlay.setPosition(coordinate);
-						else this.unselectFeature();
+						} else if (fleetData) {
+							// no objects, only fleet data
+							this.unselectFeature();
+							this.selectFleet(fleetData);
+							this.closePopup();
+						} else {
+							// no objects or fleet data
+							this.unselectFleet();
+							this.unselectFeature();
+							this.closePopup();
+						}
 					}
-					if (gridRes && !this.clickedFeatures.length) {
+
+					// Clicked grid
+					if (gridRes && !this.clickedFeatures.length && !fleetProps) {
+						this.closePopup();
 						const gridFeat = first(get(gridRes, 'features', []));
 						if (gridFeat) this.renderSelectedGrid(gridFeat);
 						else this.unselectGrid();

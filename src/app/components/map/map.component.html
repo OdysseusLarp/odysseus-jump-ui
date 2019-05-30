@@ -8,7 +8,10 @@
 						feat.properties.category || feat.properties.celestial_body
 					}})</span
 				>
-				<hr *ngIf="i + 1 !== clickedFeatures.length"/>
+				<hr *ngIf="i + 1 !== clickedFeatures.length + (clickedFleet ? 1 : 0)"/>
+			</li>
+			<li *ngIf="clickedFleet">
+				<span class="link fleet" (click)="selectFleet(clickedFleet)">Fleet ({{ clickedFleet.ships.length }} ship{{ clickedFleet.ships.length > 1 ? 's' : '' }})</span>
 			</li>
 		</ul>
 	</div>
