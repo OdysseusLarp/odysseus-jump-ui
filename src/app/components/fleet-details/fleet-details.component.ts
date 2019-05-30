@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
-import { StateService, JumpStatusValue } from '@app/services/state.service';
+import { Subscription } from 'rxjs';
+import { StateService } from '@app/services/state.service';
 import { ListItem } from '../dotted-list/dotted-list.component';
 
 @Component({
@@ -16,7 +16,6 @@ export class FleetDetailsComponent implements OnInit, OnDestroy {
 	constructor(private state: StateService) {}
 
 	ngOnInit() {
-		console.log('fleet details component loaded');
 		this.selectedFleet$ = this.state.selectedFleet$.subscribe(fleet => {
 			this.fleet = fleet;
 			if (!this.fleet) return;

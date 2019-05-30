@@ -11,7 +11,7 @@ export interface ListItem {
 	styleUrls: ['./dotted-list.component.scss'],
 })
 export class DottedListComponent implements OnInit {
-	@Input('items') items: ListItem[];
+	@Input() items: ListItem[];
 
 	constructor() {}
 
