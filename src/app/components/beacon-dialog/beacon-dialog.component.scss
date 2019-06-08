@@ -1,0 +1,42 @@
+@import '../../../scss/colors.scss';
+
+:host {
+	color: #fff;
+}
+
+.container {
+	position: relative;
+}
+
+h2 {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.decode-error {
+	font-size: 0.8em;
+	color: lighten($error-color, 30%);
+}
+
+input {
+	width: 100%;
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 1.3em;
+}
+
+button {
+	font-size: 1.1em;
+}
+
+.link-disabled {
+	color: darken(#006466, 10%);
+	cursor: not-allowed;
+}
+
+// Adjust closer position because of dialog
+.box-closer {
+	top: -35px;
+	right: -20px;
+	font-size: 1.5em;
+}

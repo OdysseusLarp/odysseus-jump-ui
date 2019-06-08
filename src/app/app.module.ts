@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule, MatSnackBarModule } from '@angular/material';
 import { InputTrimModule } from 'ng2-trim-directive';
@@ -22,6 +22,7 @@ import { MessageDialogComponent } from './components/message-dialog/message-dial
 import { StaticScreenComponent } from './components/static-screen/static-screen.component';
 import { CountdownDialogComponent } from './components/countdown-dialog/countdown-dialog.component';
 import { FleetDetailsComponent } from './components/fleet-details/fleet-details.component';
+import { BeaconDialogComponent } from './components/beacon-dialog/beacon-dialog.component';
 
 @NgModule({
 	declarations: [
@@ -37,11 +38,13 @@ import { FleetDetailsComponent } from './components/fleet-details/fleet-details.
 		StaticScreenComponent,
 		CountdownDialogComponent,
 		FleetDetailsComponent,
+		BeaconDialogComponent,
 	],
 	imports: [
 		BrowserModule,
 		RouterModule.forRoot(routes),
 		ReactiveFormsModule,
+		FormsModule,
 		InputTrimModule,
 		BrowserAnimationsModule,
 		MatDialogModule,
@@ -54,6 +57,7 @@ import { FleetDetailsComponent } from './components/fleet-details/fleet-details.
 		JumpDialogComponent,
 		MessageDialogComponent,
 		CountdownDialogComponent,
+		BeaconDialogComponent,
 	],
 })
 export class AppModule {}

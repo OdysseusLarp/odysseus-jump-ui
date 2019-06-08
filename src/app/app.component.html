@@ -2,9 +2,15 @@
 <div class="main-container" [ngClass]="{ hidden: !getIsEnabled() }">
 	<div class="action-bar">
 		<button [disabled]="hasActiveDialog()" (click)="onJumpClick()">Jump</button>
-		<button [disabled]="hasActiveDialog()" (click)="onGridToggle()">{{ (isGridVisible$ | async) ? 'Hide' : 'Show' }} grid</button>
-		<button [disabled]="hasActiveDialog()" (click)="onDecodeSignalClick()">Decode signal</button>
-		<button [disabled]="hasActiveDialog()" (click)="onCenterToShipClick()">Center to ship</button>
+		<button [disabled]="hasActiveDialog()" (click)="onGridToggle()">
+			{{ (isGridVisible$ | async) ? 'Hide' : 'Show' }} grid
+		</button>
+		<button [disabled]="hasActiveDialog()" (click)="onDecodeSignalClick()">
+			Decrypt signal
+		</button>
+		<button [disabled]="hasActiveDialog()" (click)="onCenterToShipClick()">
+			Center to ship
+		</button>
 	</div>
 	<div class="map-actions">
 		<button [disabled]="hasActiveDialog()" (click)="onZoomMap(1)">+</button>
@@ -17,7 +23,5 @@
 		<app-fleet-details></app-fleet-details>
 		<app-grid-details></app-grid-details>
 	</div>
-	<div class="ship-log">
-		<app-ship-log></app-ship-log>
-	</div>
+	<div class="ship-log"><app-ship-log></app-ship-log></div>
 </div>

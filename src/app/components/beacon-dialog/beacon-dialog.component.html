@@ -1,0 +1,32 @@
+<div class="container">
+	<div>
+		<h2>Enter signal decryption key</h2>
+		<p class="decode-error">{{ error }}</p>
+		<div>
+			<input
+				type="text"
+				class="input"
+				(keydown)="keyDown($event)"
+				[(ngModel)]="value"
+				[disabled]="isSubmitting"
+				autofocus
+				#signalInput
+			/>
+			<button
+				class="button block"
+				[ngClass]="{ 'button-in-progress': isSubmitting }"
+				[disabled]="isSubmitting || value.length < 4"
+				type="button"
+				(click)="onDecodeSignal()"
+			>
+				<span *ngIf="!isSubmitting">DECRYPT SIGNAL &gt;&gt;</span>
+				<span *ngIf="isSubmitting">DECRYPTING...</span>
+			</button>
+			<span
+				class="box-closer link"
+				[ngClass]="{ 'link-disabled': isSubmitting }"
+				(click)="this.close()"
+			></span>
+		</div>
+	</div>
+</div>

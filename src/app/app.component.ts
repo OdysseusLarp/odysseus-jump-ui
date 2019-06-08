@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { JumpDialogComponent } from '@components/jump-dialog/jump-dialog.component';
 import { MessageDialogComponent } from '@components/message-dialog/message-dialog.component';
 import { CountdownDialogComponent } from '@components/countdown-dialog/countdown-dialog.component';
+import { BeaconDialogComponent } from '@components/beacon-dialog/beacon-dialog.component';
 import { StateService, JumpStatusValue } from '@app/services/state.service';
 import { get } from 'lodash';
 import { Subscription, combineLatest } from 'rxjs';
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
 	jumpState$: Subscription;
 	jumpDialogRef: MatDialogRef<JumpDialogComponent>;
 	countdownDialogRef: MatDialogRef<CountdownDialogComponent>;
+	beaconDialogRef: MatDialogRef<BeaconDialogComponent>;
 
 	constructor(
 		public dialog: MatDialog,
@@ -65,7 +67,11 @@ export class AppComponent implements OnInit {
 	}
 
 	hasActiveDialog() {
-		return !!(this.countdownDialogRef || this.jumpDialogRef);
+		return !!(
+			this.countdownDialogRef ||
+			this.jumpDialogRef ||
+			this.beaconDialogRef
+		);
 	}
 
 	onJumpClick() {
@@ -148,7 +154,14 @@ export class AppComponent implements OnInit {
 		this.state.isGridVisible$.next(value);
 	}
 
-	onDecodeSignalClick() {}
+	onDecodeSignalClick() {
+		this.beaconDialogRef = this.dialog.open(BeaconDialogComponent, {
+			...DIALOG_SETTINGS,
+		});
+		this.beaconDialogRef
+			.afterClosed()
+			.subscribe(() => (this.beaconDialogRef = null));
+	}
 
 	private openCountdownDialog() {
 		this.countdownDialogRef = this.dialog.open(CountdownDialogComponent, {
