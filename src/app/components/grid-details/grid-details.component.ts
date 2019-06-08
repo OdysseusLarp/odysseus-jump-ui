@@ -26,6 +26,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	canBeScanned: boolean;
 	isScanning = false;
 	isDiscovered: boolean;
+	hasBeacon: boolean;
 	scanEvent: api.Event;
 	formattedListItems: ListItem[] = [];
 	jumpStatus$: Observable<JumpStatusValue>;
@@ -41,6 +42,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			const props = getFeatureProperties(feat);
 			this.properties = props;
 			this.isDiscovered = props.isDiscovered;
+			this.hasBeacon = !!props.hasBeacon;
 			this.generateFormattedList();
 		});
 		this.ship$ = this.state.ship.subscribe(ship => {
@@ -77,6 +79,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 		this.isScanning = false;
 		this.formattedListItems = [];
 		this.isDiscovered = false;
+		this.hasBeacon = false;
 	}
 
 	ngOnDestroy() {

@@ -3,15 +3,25 @@
 	<div *ngIf="properties">
 		<app-dotted-list [items]="formattedListItems"></app-dotted-list>
 	</div>
+	<p *ngIf="hasBeacon">
+		An unknown signal has been detected originating from this area.
+	</p>
 	<div *ngIf="!isDiscovered">
 		<button
 			class="button block"
 			type="button"
 			[ngClass]="{ 'button-in-progress': isScanning }"
 			(click)="scanGrid()"
-			[disabled]="!canBeScanned || isScanning || probeCount < 1 || (jumpStatus$ | async) === 'jump_initiated'">
+			[disabled]="
+				!canBeScanned ||
+				isScanning ||
+				probeCount < 1 ||
+				(jumpStatus$ | async) === 'jump_initiated'
+			"
+		>
 			<span *ngIf="isScanning">
-				Probe is scanning {{ properties?.name }} (ETA {{ getEventOccursSeconds(scanEvent) }} seconds)
+				Probe is scanning {{ properties?.name }} (ETA
+				{{ getEventOccursSeconds(scanEvent) }} seconds)
 			</span>
 			<span *ngIf="!isScanning && probeCount > 0 && canBeScanned">
 				Send probe to scan {{ properties?.name }}
@@ -19,13 +29,8 @@
 			<span *ngIf="!isScanning && probeCount < 1 && canBeScanned">
 				No probes available to perform scan
 			</span>
-			<span *ngIf="!canBeScanned">
-				Target is outside of probe distance
-			</span>
+			<span *ngIf="!canBeScanned"> Target is outside of probe distance </span>
 		</button>
 	</div>
-	<span
-		class="box-closer link"
-		(click)="this.closeBox()"
-	></span>
+	<span class="box-closer link" (click)="this.closeBox()"></span>
 </div>
