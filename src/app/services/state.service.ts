@@ -232,4 +232,17 @@ export class StateService {
 	addReadableTime(obj) {
 		return moment.duration(moment(obj.created_at).diff(moment())).humanize();
 	}
+
+	getScanDuration(scanType: 'object' | 'grid') {
+		const { min_seconds, max_seconds } = get(
+			this.ship.getValue(),
+			['metadata', `${scanType}_scan_duration`],
+			{}
+		);
+		// Default to 30sec scans
+		if (!min_seconds || !max_seconds) return 30;
+		return Math.floor(
+			Math.random() * (max_seconds - min_seconds) + min_seconds
+		);
+	}
 }

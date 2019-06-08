@@ -80,7 +80,7 @@ export class ObjectDetailsComponent implements OnInit, OnDestroy {
 		if (this.hasScanEvents) return;
 		const id = get(this.feature, 'properties.id');
 		const scanTime = moment()
-			.add(30, 'seconds') // 30 second scan time hardcoded for testing
+			.add(this.state.getScanDuration('object'), 'seconds')
 			.format();
 		putEvent({
 			type: 'SCAN_OBJECT',

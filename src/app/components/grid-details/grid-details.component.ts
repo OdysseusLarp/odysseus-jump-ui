@@ -91,7 +91,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 		const id = get(this.selectedGrid, 'properties.id');
 		this.isScanning = true;
 		const scanTime = moment()
-			.add(30, 'seconds') // 30 second scan time hardcoded for testing
+			.add(this.state.getScanDuration('grid'), 'seconds')
 			.format();
 		putEvent({
 			type: 'SCAN_GRID',
