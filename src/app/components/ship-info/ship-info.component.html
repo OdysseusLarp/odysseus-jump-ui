@@ -1,15 +1,15 @@
 <div class="boxed sidebar-box">
-  <div *ngIf="odysseus">
-    <div class="header">
-        <img src="assets/arati_system_emblem_white.png" />
-        <h1>Odysseus ship info</h1>
-    </div>
-    <app-dotted-list [items]="formattedListItems"></app-dotted-list>
-  </div>
-  <div *ngIf="events.length && isDebugEnabled">
-    <h2>Active events ({{ events.length }})</h2>
-      <p *ngFor="let event of events; let i = index">
-          {{ event.type }} taking place in {{ event.occurs_in_seconds }} seconds
-      </p>
-  </div>
+	<div *ngIf="odysseus">
+		<div class="header">
+			<img src="assets/arati_system_emblem_white.png" />
+			<h1>LORA Science Voyager</h1>
+		</div>
+		<app-dotted-list [items]="formattedListItems"></app-dotted-list>
+	</div>
+	<div *ngIf="events.length && isDebugEnabled">
+		<h2>Active events ({{ events.length }})</h2>
+		<p *ngFor="let event of events; let i = index">
+			{{ event.type }} taking place in {{ event.occurs_in_seconds }} seconds
+		</p>
+	</div>
 </div>
