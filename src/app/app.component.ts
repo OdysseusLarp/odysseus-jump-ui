@@ -57,7 +57,13 @@ export class AppComponent implements OnInit {
 		// Subscribe to new log entries that have metadata.showPopup === true
 		// and show that log entry in a MessageDialogComponent
 		this.socketService.logEntryAdded
-			.pipe(filter(logEntry => get(logEntry, 'metadata.showPopup') === true))
+			.pipe(
+				filter(
+					logEntry =>
+						get(logEntry, 'metadata.showPopup') === true &&
+						this.isJumpUiEnabled$.getValue()
+				)
+			)
 			.subscribe(({ type, message }) => {
 				this.dialog.open(MessageDialogComponent, {
 					...DIALOG_SETTINGS,
