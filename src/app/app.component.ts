@@ -105,8 +105,7 @@ export class AppComponent implements OnInit {
 		let message;
 		switch (jumpStatus) {
 			case 'cooldown': {
-				message =
-					'Jump drive is on cooldown. Jumping is not possible in this state.';
+				message = 'Jump drive is on cooldown. Jumping is not possible yet.';
 				break;
 			}
 			case 'preparation': {

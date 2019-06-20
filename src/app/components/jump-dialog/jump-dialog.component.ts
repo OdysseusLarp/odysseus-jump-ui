@@ -1,7 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { StateService, JumpStatusValue } from '../../services/state.service';
-import { Subscription } from 'rxjs';
+import {
+	StateService,
+	JumpStatusValue,
+	JumpState,
+} from '../../services/state.service';
+import { Subscription, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { postFleetIdJumpValidate } from '@api/Fleet';
 import * as DataApi from '@api/Data';
 import { pickBy, get, startCase, toLower } from 'lodash';
@@ -18,6 +23,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 	jumpForm: FormGroup;
 	isSubmitting = false;
 	jumpStatus: JumpStatusValue;
+	safeJump$: Observable<string>;
 
 	constructor(
 		private state: StateService,
@@ -30,6 +36,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 		this.jumpStatus$ = this.state.jumpStatus.subscribe(state => {
 			this.jumpStatus = get(state, 'status');
 		});
+		this.safeJump$ = this.state.jumpState.pipe(map(state => state.readyT));
 	}
 
 	ngOnDestroy() {

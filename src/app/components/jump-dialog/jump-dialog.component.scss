@@ -35,6 +35,18 @@ form {
 
 .massive-button {
 	font-size: 3em;
+	.big-button-wrapper {
+		display: flex;
+		flex-direction: column;
+		span {
+			display: block;
+			text-align: center;
+			width: 100%;
+		}
+		.subtitle {
+			font-size: 0.35em;
+		}
+	}
 }
 
 .button-abort {
@@ -43,5 +55,13 @@ form {
 }
 
 .button-abort:hover {
-	background: #ff0b03 !important;
+	background: #d60700 !important;
+}
+
+.time-until-safe-jump {
+	font-size: 1.4em;
+	display: block;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 24px;
 }

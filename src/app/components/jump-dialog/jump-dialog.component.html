@@ -5,45 +5,83 @@
 			<form [formGroup]="jumpForm" (ngSubmit)="onCalculateJumpCoordinates()">
 				<div>
 					<label for="subQuadrant">Sub-quadrant</label>
-					<input class="input" id="subQuadrant" formControlName="sub_quadrant" trim="blur" />
+					<input
+						class="input"
+						id="subQuadrant"
+						formControlName="sub_quadrant"
+						trim="blur"
+					/>
 				</div>
 				<div>
 					<label for="sector">Sector</label>
-					<input class="input" id="sector" formControlName="sector" trim="blur" />
+					<input
+						class="input"
+						id="sector"
+						formControlName="sector"
+						trim="blur"
+					/>
 				</div>
 				<div>
 					<label for="subSector">Sub-sector</label>
-					<input class="input" id="subSector" formControlName="sub_sector" trim="blur" />
+					<input
+						class="input"
+						id="subSector"
+						formControlName="sub_sector"
+						trim="blur"
+					/>
 				</div>
 				<div>
 					<label for="planetOrbit">Orbit</label>
-					<input class="input" id="planetOrbit" formControlName="planet_orbit" trim="blur" />
+					<input
+						class="input"
+						id="planetOrbit"
+						formControlName="planet_orbit"
+						trim="blur"
+					/>
 				</div>
 			</form>
-			<button class="button block" [disabled]="!jumpForm.valid || isSubmitting" type="button" (click)="onCalculateJumpCoordinates()">
-				CALCULATE JUMP VECTOR &gt;&gt;
+			<button
+				class="button block"
+				[disabled]="!jumpForm.valid || isSubmitting"
+				type="button"
+				(click)="onCalculateJumpCoordinates()"
+			>
+				CALCULATE JUMP VECTORS &gt;&gt;
 			</button>
-			<span
-				class="box-closer link"
-				(click)="this.close()"
-			></span>
+			<span class="box-closer link" (click)="this.close()"></span>
 		</div>
 	</div>
 	<div *ngIf="jumpStatus && jumpStatus === 'prep_complete'">
-		<h2>Not ready for safe jump yet, stuff will break</h2>
-		<p>TODO: Add safe to jump countdown</p>
-		<button class="button block massive-button" type="button" (click)="onPerformJump()">
-			ENGAGE JUMP &gt;&gt;
+		<span class="time-until-safe-jump"
+			>Ready for safe jump in {{ safeJump$ | async }}</span
+		>
+		<button
+			class="button block massive-button button-abort"
+			type="button"
+			(click)="onPerformJump()"
+		>
+			<div class="big-button-wrapper">
+				<span>ENGAGE JUMP &gt;&gt;</span>
+				<span class="subtitle">(Premature jump causes breakdowns)</span>
+			</div>
 		</button>
 	</div>
 	<div *ngIf="jumpStatus && jumpStatus === 'ready'">
-		<button class="button block massive-button" type="button" (click)="onPerformJump()">
+		<button
+			class="button block massive-button"
+			type="button"
+			(click)="onPerformJump()"
+		>
 			ENGAGE JUMP &gt;&gt;
 		</button>
 	</div>
 	<div *ngIf="jumpStatus && jumpStatus === 'calculating'">
-		<button class="button block massive-button button-abort" type="button" (click)="onCancelJump()">
-			ABORT COORDINATE CALCULATION
+		<button
+			class="button block massive-button button-abort"
+			type="button"
+			(click)="onCancelJump()"
+		>
+			ABORT CALCULATION
 		</button>
 	</div>
 </div>
