@@ -10,8 +10,8 @@ import { map } from 'rxjs/operators';
 import { postFleetIdJumpValidate } from '@api/Fleet';
 import * as DataApi from '@api/Data';
 import { pickBy, get, startCase, toLower } from 'lodash';
-import { MatDialogRef, MatSnackBar } from '@angular/material';
-import { SNACKBAR_DEFAULTS } from '../../config';
+import { MatDialogRef } from '@angular/material';
+import { SnackService } from '@app/services/snack.service';
 
 @Component({
 	selector: 'app-jump-dialog',
@@ -30,7 +30,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 	constructor(
 		private state: StateService,
 		private dialogRef: MatDialogRef<JumpDialogComponent>,
-		private snackBar: MatSnackBar
+		private snack: SnackService
 	) {}
 
 	ngOnInit() {
@@ -58,7 +58,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 		const { data } = await this.validateJumpCoordinates(jumpCoordinates);
 		if (!data.isValid) {
 			const message = get(data, 'message');
-			this.snackBar.open(`Error: ${message}`, null, SNACKBAR_DEFAULTS);
+			this.snack.error('Error', message);
 			this.isSubmitting = false;
 			return;
 		}
@@ -94,12 +94,11 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 			version: this.state.jumpStatus.getValue().version,
 		})
 			.then(res => {
-				console.log('Jump initiated =>', res);
-				this.snackBar.open('Jump initiated', null, SNACKBAR_DEFAULTS);
+				this.snack.success('Jump drive', 'Jump initiated');
 			})
 			.catch(err => {
 				const message = get(err, 'data.body.error', '');
-				this.snackBar.open(`Error: ${message}`, null, SNACKBAR_DEFAULTS);
+				this.snack.error('Error', message);
 			});
 		this.close();
 	}
@@ -111,15 +110,11 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 			version: this.state.jumpStatus.getValue().version,
 		})
 			.then(res => {
-				this.snackBar.open(
-					'Coordinate calculation aborted',
-					null,
-					SNACKBAR_DEFAULTS
-				);
+				this.snack.warn('Jump drive', 'Coordinate calculation aborted');
 			})
 			.catch(err => {
 				const message = get(err, 'data.body.error', '');
-				this.snackBar.open(`Error: ${message}`, null, SNACKBAR_DEFAULTS);
+				this.snack.error('Error', message);
 			});
 		this.close();
 	}

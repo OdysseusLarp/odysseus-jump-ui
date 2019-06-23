@@ -23,6 +23,7 @@ import { StaticScreenComponent } from './components/static-screen/static-screen.
 import { CountdownDialogComponent } from './components/countdown-dialog/countdown-dialog.component';
 import { FleetDetailsComponent } from './components/fleet-details/fleet-details.component';
 import { BeaconDialogComponent } from './components/beacon-dialog/beacon-dialog.component';
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
 
 @NgModule({
 	declarations: [
@@ -39,6 +40,7 @@ import { BeaconDialogComponent } from './components/beacon-dialog/beacon-dialog.
 		CountdownDialogComponent,
 		FleetDetailsComponent,
 		BeaconDialogComponent,
+		SnackbarComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -58,6 +60,7 @@ import { BeaconDialogComponent } from './components/beacon-dialog/beacon-dialog.
 		MessageDialogComponent,
 		CountdownDialogComponent,
 		BeaconDialogComponent,
+		SnackbarComponent,
 	],
 })
 export class AppModule {}

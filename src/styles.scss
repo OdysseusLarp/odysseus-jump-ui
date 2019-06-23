@@ -185,3 +185,15 @@ mat-dialog-container {
 div {
 	scrollbar-color: #00c5c8 #002829;
 }
+
+/* Snackbar styling */
+.custom-snackbar {
+	background: linear-gradient(180deg, #010412 0%, #010412 45%, #011b2b 100%);
+	border: 2px solid #00c5c8;
+	padding: 0;
+	width: auto !important;
+	position: fixed;
+	left: 45px;
+	bottom: 0;
+	z-index: 9999999;
+}

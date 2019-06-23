@@ -2,10 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SocketIoService } from '../../services/socketio.service';
 import { Subscription } from 'rxjs';
 import { StateService, JumpStatusValue } from '../../services/state.service';
-import { MatSnackBar } from '@angular/material';
-import { SNACKBAR_DEFAULTS } from '../../config';
 import { get } from 'lodash';
 import { ListItem } from '../dotted-list/dotted-list.component';
+import { SnackService } from '@app/services/snack.service';
 
 interface Ship extends api.Ship {
 	position?: api.Grid;
@@ -66,7 +65,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	constructor(
 		private socketService: SocketIoService,
 		private stateService: StateService,
-		private snackBar: MatSnackBar
+		private snack: SnackService
 	) {}
 
 	ngOnInit() {
@@ -89,11 +88,14 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 						{}
 					);
 					const targetName = `${sub_quadrant}-${sector}-${sub_sector}`;
-					this.showToast(`Succesfully jumped to ${targetName}`);
+					this.snack.success(
+						'Jump drive',
+						`Succesfully jumped to ${targetName}`
+					);
 				} else if (event.type === 'SCAN_GRID') {
-					this.showToast(`Succesfully scanned grid`);
+					this.snack.success('Scan', `Succesfully scanned grid`);
 				} else if (event.type === 'SCAN_OBJECT') {
-					this.showToast(`Succesfully scanned object`);
+					this.snack.success('Scan', `Succesfully scanned object`);
 				}
 			}
 		);
@@ -116,10 +118,6 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			this.generateFormattedList();
 		});
 		this.isDebugEnabled = this.stateService.isDebugEnabled;
-	}
-
-	private showToast(str) {
-		this.snackBar.open(str, null, SNACKBAR_DEFAULTS);
 	}
 
 	ngOnDestroy() {
