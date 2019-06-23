@@ -58,6 +58,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 	events: api.Event[] = [];
 	odysseus: Ship;
 	probeCount: number;
+	jumpCrystalCount: number;
 	formattedListItems: ListItem[] = [];
 	jumpStatus: JumpStatusValue;
 	isDebugEnabled = false;
@@ -99,6 +100,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 		this.ship$ = this.stateService.ship.subscribe(ship => {
 			this.odysseus = ship;
 			this.probeCount = get(ship, 'metadata.probe_count', 0);
+			this.jumpCrystalCount = get(ship, 'metadata.jump_crystal_count', 0);
 			this.generateFormattedList();
 		});
 		this.jumpStatus$ = this.stateService.jumpStatus.subscribe(state => {
@@ -147,6 +149,7 @@ export class ShipInfoComponent implements OnInit, OnDestroy {
 			{ key: 'Time until safe jump', value: props.readyCountdown },
 			{ key: 'Max jump distance (sub-sector)', value: props.jumpRange },
 			{ key: 'Max scan distance (sub-sector)', value: props.scanRange },
+			{ key: 'Jump crystals left (pcs)', value: this.jumpCrystalCount },
 			{ key: 'Probes left (pcs)', value: this.probeCount },
 		];
 		if (['broken', 'cooldown', 'ready_to_prep'].includes(this.jumpStatus)) {
