@@ -4,7 +4,9 @@
 		<div>
 			<form [formGroup]="jumpForm" (ngSubmit)="onCalculateJumpCoordinates()">
 				<div>
-					<label for="subQuadrant">Sub-quadrant</label>
+					<label for="subQuadrant"
+						>Sub-quadrant<span class="input-required">*</span></label
+					>
 					<input
 						class="input"
 						id="subQuadrant"
@@ -13,7 +15,9 @@
 					/>
 				</div>
 				<div>
-					<label for="sector">Sector</label>
+					<label for="sector"
+						>Sector<span class="input-required">*</span></label
+					>
 					<input
 						class="input"
 						id="sector"
@@ -22,7 +26,9 @@
 					/>
 				</div>
 				<div>
-					<label for="subSector">Sub-sector</label>
+					<label for="subSector"
+						>Sub-sector<span class="input-required">*</span></label
+					>
 					<input
 						class="input"
 						id="subSector"
