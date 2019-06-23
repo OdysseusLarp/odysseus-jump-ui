@@ -24,6 +24,8 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 	isSubmitting = false;
 	jumpStatus: JumpStatusValue;
 	safeJump$: Observable<string>;
+	jumpCrystalCount: number;
+	ship$: Subscription;
 
 	constructor(
 		private state: StateService,
@@ -37,10 +39,14 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 			this.jumpStatus = get(state, 'status');
 		});
 		this.safeJump$ = this.state.jumpState.pipe(map(state => state.readyT));
+		this.ship$ = this.state.ship.subscribe(ship => {
+			this.jumpCrystalCount = get(ship, 'metadata.jump_crystal_count', 0);
+		});
 	}
 
 	ngOnDestroy() {
 		this.jumpStatus$.unsubscribe();
+		this.ship$.unsubscribe();
 	}
 
 	async onCalculateJumpCoordinates() {

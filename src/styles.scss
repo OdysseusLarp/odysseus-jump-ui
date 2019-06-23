@@ -86,7 +86,7 @@ h3 {
 	transition: background 0.15s;
 }
 
-.button:disabled:not(.button-in-progress) {
+.button:disabled:not(.button-in-progress):not(.button-abort) {
 	background: #001f20;
 	color: #d8d8d8;
 	padding: 8px 16px;

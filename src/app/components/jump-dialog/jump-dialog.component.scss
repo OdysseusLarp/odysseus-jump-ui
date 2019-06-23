@@ -54,8 +54,18 @@ form {
 	border: 2px solid #c70300;
 }
 
-.button-abort:hover {
+.button-abort:hover:not(:disabled) {
 	background: #d60700 !important;
+}
+
+.button-abort:disabled {
+	background: #2b0100;
+	color: #d8d8d8;
+	padding: 8px 16px;
+	border: 2px solid #920200;
+	font-weight: bold;
+	transition: background 0.15s;
+	cursor: not-allowed;
 }
 
 .time-until-safe-jump {

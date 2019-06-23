@@ -58,11 +58,15 @@
 		<button
 			class="button block massive-button button-abort"
 			type="button"
+			[disabled]="jumpCrystalCount < 1"
 			(click)="onPerformJump()"
 		>
-			<div class="big-button-wrapper">
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount > 0">
 				<span>ENGAGE JUMP &gt;&gt;</span>
 				<span class="subtitle">(Premature jump causes breakdowns)</span>
+			</div>
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount < 1">
+				<span>NO JUMP CRYSTALS</span>
 			</div>
 		</button>
 	</div>
@@ -70,9 +74,16 @@
 		<button
 			class="button block massive-button"
 			type="button"
+			[ngClass]="{ 'button-abort': jumpCrystalCount < 1 }"
+			[disabled]="jumpCrystalCount < 1"
 			(click)="onPerformJump()"
 		>
-			ENGAGE JUMP &gt;&gt;
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount > 0">
+				<span>ENGAGE JUMP &gt;&gt;</span>
+			</div>
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount < 1">
+				<span>NO JUMP CRYSTALS</span>
+			</div>
 		</button>
 	</div>
 	<div *ngIf="jumpStatus && jumpStatus === 'calculating'">
