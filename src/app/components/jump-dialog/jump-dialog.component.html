@@ -4,7 +4,9 @@
 		<div>
 			<form [formGroup]="jumpForm" (ngSubmit)="onCalculateJumpCoordinates()">
 				<div>
-					<label for="subQuadrant">Sub-quadrant</label>
+					<label for="subQuadrant"
+						>Sub-quadrant<span class="input-required">*</span></label
+					>
 					<input
 						class="input"
 						id="subQuadrant"
@@ -13,7 +15,9 @@
 					/>
 				</div>
 				<div>
-					<label for="sector">Sector</label>
+					<label for="sector"
+						>Sector<span class="input-required">*</span></label
+					>
 					<input
 						class="input"
 						id="sector"
@@ -22,7 +26,9 @@
 					/>
 				</div>
 				<div>
-					<label for="subSector">Sub-sector</label>
+					<label for="subSector"
+						>Sub-sector<span class="input-required">*</span></label
+					>
 					<input
 						class="input"
 						id="subSector"
@@ -58,11 +64,15 @@
 		<button
 			class="button block massive-button button-abort"
 			type="button"
+			[disabled]="jumpCrystalCount < 1"
 			(click)="onPerformJump()"
 		>
-			<div class="big-button-wrapper">
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount > 0">
 				<span>ENGAGE JUMP &gt;&gt;</span>
 				<span class="subtitle">(Premature jump causes breakdowns)</span>
+			</div>
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount < 1">
+				<span>NO JUMP CRYSTALS</span>
 			</div>
 		</button>
 	</div>
@@ -70,9 +80,16 @@
 		<button
 			class="button block massive-button"
 			type="button"
+			[ngClass]="{ 'button-abort': jumpCrystalCount < 1 }"
+			[disabled]="jumpCrystalCount < 1"
 			(click)="onPerformJump()"
 		>
-			ENGAGE JUMP &gt;&gt;
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount > 0">
+				<span>ENGAGE JUMP &gt;&gt;</span>
+			</div>
+			<div class="big-button-wrapper" *ngIf="jumpCrystalCount < 1">
+				<span>NO JUMP CRYSTALS</span>
+			</div>
 		</button>
 	</div>
 	<div *ngIf="jumpStatus && jumpStatus === 'calculating'">

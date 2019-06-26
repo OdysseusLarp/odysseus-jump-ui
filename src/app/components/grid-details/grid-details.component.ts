@@ -7,8 +7,7 @@ import { putEvent } from '@api/Event';
 import { get, pick, set } from 'lodash';
 import { ListItem } from '../dotted-list/dotted-list.component';
 import moment from 'moment';
-import { MatSnackBar } from '@angular/material';
-import { SNACKBAR_DEFAULTS } from '../../config';
+import { SnackService } from '@app/services/snack.service';
 
 @Component({
 	selector: 'app-grid-details',
@@ -31,7 +30,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 	formattedListItems: ListItem[] = [];
 	jumpStatus$: Observable<JumpStatusValue>;
 
-	constructor(private state: StateService, private snackBar: MatSnackBar) {}
+	constructor(private state: StateService, private snack: SnackService) {}
 
 	ngOnInit() {
 		this.selectedGrid$ = this.state.selectedGrid$.subscribe(feat => {
@@ -104,7 +103,7 @@ export class GridDetailsComponent implements OnInit, OnDestroy {
 			if (!res.error) return;
 			this.isScanning = false;
 			const message = get(res, 'data.body.error', '');
-			this.snackBar.open(`Error: ${message}`, null, SNACKBAR_DEFAULTS);
+			this.snack.error('Error', message);
 		});
 	}
 
