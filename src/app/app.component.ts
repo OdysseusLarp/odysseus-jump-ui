@@ -28,6 +28,7 @@ export class AppComponent implements OnInit {
 	jumpDialogRef: MatDialogRef<JumpDialogComponent>;
 	countdownDialogRef: MatDialogRef<CountdownDialogComponent>;
 	beaconDialogRef: MatDialogRef<BeaconDialogComponent>;
+	logEntryRefs: Set<MatDialogRef<MessageDialogComponent>> = new Set([]);
 
 	constructor(
 		public dialog: MatDialog,
@@ -49,6 +50,8 @@ export class AppComponent implements OnInit {
 			const status = get(state, 'status');
 			if (!this.countdownDialogRef && status === 'jump_initiated') {
 				this.openCountdownDialog();
+				// Clear log entry refs
+				if (this.logEntryRefs.size) this.logEntryRefs.forEach(d => d.close());
 			} else if (this.countdownDialogRef && status !== 'jump_initiated') {
 				this.closeCountdownDialog();
 			}
@@ -65,10 +68,14 @@ export class AppComponent implements OnInit {
 				)
 			)
 			.subscribe(({ type, message }) => {
-				this.dialog.open(MessageDialogComponent, {
+				const dialogRef = this.dialog.open(MessageDialogComponent, {
 					...DIALOG_SETTINGS,
 					data: { message, type },
 				});
+				this.logEntryRefs.add(dialogRef);
+				dialogRef
+					.afterClosed()
+					.subscribe(() => this.logEntryRefs.delete(dialogRef));
 			});
 	}
 
