@@ -83,6 +83,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 				toLower(get(jumpCoordinates, 'sub_quadrant', ''))
 			).replace(' ', '-'),
 			sector: get(jumpCoordinates, 'sector', '').toUpperCase(),
+			planet_orbit: get(jumpCoordinates, 'planet_orbit', '').toUpperCase(),
 		};
 	}
 
