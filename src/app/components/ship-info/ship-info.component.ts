@@ -38,6 +38,7 @@ export function getJumpStatus(status: JumpStatusValue) {
 export function getJumpCoordinates(data) {
 	const { sub_quadrant, sector, sub_sector } = get(data, 'coordinates', {});
 	// TODO: add planet orbit if available
+	if (!sub_quadrant) return 'None';
 	return `${sub_quadrant}-${sector}-${sub_sector}`;
 }
 
