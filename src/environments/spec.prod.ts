@@ -2,7 +2,7 @@
 // TODO: Configure apigen properly so that this can be removed
 
 const spec: api.OpenApiSpec = {
-	host: 'odysseus.nicou.me',
+	host: 'apps.odysseuslarp.dev',
 	schemes: ['https'],
 	basePath: '',
 	contentTypes: [],
