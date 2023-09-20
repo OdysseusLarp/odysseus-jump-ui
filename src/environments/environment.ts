@@ -6,5 +6,5 @@
 export const environment = {
 	production: false,
 	apiUrl: 'http://localhost:8888',
-	geoserverUrl: 'http://localhost:8001/geoserver/odysseus',
+	geoserverUrl: 'http://localhost:8090/geoserver/odysseus',
 };
