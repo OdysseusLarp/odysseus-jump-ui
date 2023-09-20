@@ -32,7 +32,11 @@
 		"NODE_OPTIONS": "--openssl-legacy-provider"
 	},
 	"remoteUser": "node",
-	"runArgs": ["--network=odysseus-backend_odysseus-dev-net"],
+	"runArgs": [
+		"--network=odysseus-backend_odysseus-dev-net",
+		"--name",
+		"odysseus-jumpui"
+	],
 	"portsAttributes": {
 		"4300": {
 			"label": "JumpUI"
