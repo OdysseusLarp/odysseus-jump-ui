@@ -10,6 +10,7 @@
 
 - **`NOTE!`** Make sure you are running `Odysseus Backend`!
 - Run `npm install -force` to install dependencies
+- If you are running the backend on non-default port (8888), update the proper API URL to `apiUrl` variable in `./src/environments/environment.ts` and to `apigen` script in `package.json`
 - Run `npm start` to start the backend server
 
 Jump UI should now be available at [http://localhost:4300](http://localhost:4300)
@@ -31,7 +32,7 @@ You can also run the backend using [VSCode dev containers](https://code.visualst
 - File --> Open Folder... --> `odysseus-jump-ui`
 - VSCode will ask do you want to `Reopen in Container` --> Click it
   - If you are too slow --> Click the button in left bottom corner (looks like two L:s or disjointed ><) and choose `Reopen in Container` from the menu.
-- VSCode will then start up both containers/services (`database` and `backend`), installs npm packages, updates the database (migrations/seeds) and starts the services.
+- VSCode will then start up container/service, install npm packages and start the service.
 
 ### Problems?
 
