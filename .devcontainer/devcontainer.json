@@ -27,7 +27,7 @@
 	],
 	"postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
 	"remoteEnv": {
-		"WATCHPACK_POLLING": "true",
+		"CHOKIDAR_USEPOLLING": "true",
 		"NODE_ENVIRONMENT": "development",
 		"NODE_OPTIONS": "--openssl-legacy-provider"
 	},
