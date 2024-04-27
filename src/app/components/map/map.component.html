@@ -3,15 +3,23 @@
 	<div id="popup-content" #popupContent>
 		<ul>
 			<li *ngFor="let feat of clickedFeatures; let i = index">
-				<span class="link" [ngClass]="{ 'is-scanned': feat.properties.is_scanned }"(click)="this.selectFeature(feat)"
-					>{{ feat.properties.name_generated }} ({{
-						feat.properties.category || feat.properties.celestial_body
-					}})</span
-				>
-				<hr *ngIf="i + 1 !== clickedFeatures.length + (clickedFleet ? 1 : 0)"/>
+				<span
+					class="link"
+					[ngClass]="{ 'is-scanned': feat.properties.is_scanned }"
+					(click)="this.selectFeature(feat)"
+					>{{
+						feat.properties.name_known || feat.properties.name_generated
+					}}
+					({{ feat.properties.celestial_body }})
+				</span>
+				<hr *ngIf="i + 1 !== clickedFeatures.length + (clickedFleet ? 1 : 0)" />
 			</li>
 			<li *ngIf="clickedFleet">
-				<span class="link fleet" (click)="selectFleet(clickedFleet)">Fleet ({{ clickedFleet.ships.length }} ship{{ clickedFleet.ships.length > 1 ? 's' : '' }})</span>
+				<span class="link fleet" (click)="selectFleet(clickedFleet)"
+					>Fleet ({{ clickedFleet.ships.length }} ship{{
+						clickedFleet.ships.length > 1 ? 's' : ''
+					}})</span
+				>
 			</li>
 		</ul>
 	</div>
