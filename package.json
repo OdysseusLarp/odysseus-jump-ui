@@ -7,9 +7,11 @@
 		"start": "npm run apigen && NODE_OPTIONS=--openssl-legacy-provider ng serve --port 4300",
 		"start:dev-cont": "ng serve --port 4300",
 		"build": "NODE_OPTIONS=--openssl-legacy-provider ng build --prod --base-href /jumpui/",
+		"build:live": "NODE_OPTIONS=--openssl-legacy-provider ng build --configuration live --prod --base-href /jumpui/",
 		"test": "ng test",
 		"lint": "ng lint",
 		"apigen": "openapi -s http://localhost:8888/api-docs.json -o ./src/app/api -l ts --semicolon",
+		"apigen:live": "openapi -s https://live.odysseuslarp.dev/api-docs.json -o ./src/app/api -l ts --semicolon",
 		"apigen:dev": "openapi -s https://apps.odysseuslarp.dev/api-docs.json -o ./src/app/api -l ts --semicolon",
 		"apigen:dev-cont": "openapi -s http://odysseus-backend:8888/api-docs.json -o ./src/app/api -l ts --semicolon",
 		"e2e": "ng e2e"
