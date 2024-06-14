@@ -203,7 +203,7 @@ export class StateService {
 
 	async fetchJumpState() {
 		const { data } = await DataApi.getDataTypeId('jump', 'ship');
-		this.jumpStatus.next(data);
+		this.jumpStatus.next(data as any);
 	}
 
 	async fetchShipMetadataState() {

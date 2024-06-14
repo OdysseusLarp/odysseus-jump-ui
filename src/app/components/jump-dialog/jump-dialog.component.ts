@@ -70,7 +70,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 			status: 'calculating',
 			coordinates: jumpCoordinates,
 			version,
-		}).then(() => {
+		} as any).then(() => {
 			this.isSubmitting = false;
 			this.close();
 		});
@@ -93,7 +93,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 		DataApi.patchDataTypeId('jump', 'ship', {
 			status: 'jump_initiated',
 			version: this.state.jumpStatus.getValue().version,
-		})
+		} as any)
 			.then(res => {
 				this.snack.success('Jump drive', 'Jump initiated');
 			})
@@ -109,7 +109,7 @@ export class JumpDialogComponent implements OnInit, OnDestroy {
 		DataApi.patchDataTypeId('jump', 'ship', {
 			status: 'ready_to_prep',
 			version: this.state.jumpStatus.getValue().version,
-		})
+		} as any)
 			.then(res => {
 				this.snack.warn('Jump drive', 'Coordinate calculation aborted');
 			})
