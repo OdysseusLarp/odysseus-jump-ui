@@ -32,7 +32,7 @@ export class BeaconDialogComponent implements OnInit, OnDestroy {
 	}
 
 	async onDecodeSignal() {
-		if (this.isSubmitting || this.value.length < 4) return;
+		if (this.isSubmitting || this.value.length !== 13) return;
 		this.isSubmitting = true;
 		this.dialogRef.disableClose = true;
 		this.error = '';

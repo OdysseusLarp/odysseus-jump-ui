@@ -11,11 +11,26 @@
 				[disabled]="isSubmitting"
 				autofocus
 				#signalInput
+				[minlength]="13"
+				[maxlength]="13"
 			/>
+			<p
+				class="validation-message"
+				*ngIf="value.length !== 13 && !isSubmitting"
+			>
+				The key must be exactly 13 characters long
+			</p>
+			<p
+				class="validation-message success-message"
+				*ngIf="value.length === 13 && !isSubmitting"
+			>
+				The key must be exactly 13 characters long
+				<span class="checkmark">&#10004;</span>
+			</p>
 			<button
 				class="button block"
 				[ngClass]="{ 'button-in-progress': isSubmitting }"
-				[disabled]="isSubmitting || value.length < 4"
+				[disabled]="isSubmitting || value.length !== 13"
 				type="button"
 				(click)="onDecodeSignal()"
 			>

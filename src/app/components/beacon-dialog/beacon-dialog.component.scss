@@ -14,7 +14,7 @@ h2 {
 }
 
 .decode-error {
-	font-size: 0.8em;
+	font-size: 0.9em;
 	color: lighten($error-color, 30%);
 }
 
@@ -39,4 +39,25 @@ button {
 	top: -35px;
 	right: -20px;
 	font-size: 1.5em;
+}
+
+.validation-message {
+	height: 1.5em; /* Ensure consistent height */
+	display: flex;
+	align-items: center;
+	justify-content: space-between; /* Space out text and checkmark */
+	color: white;
+}
+
+.success-message {
+	color: $success-color;
+	font-weight: bold;
+}
+
+.checkmark {
+	display: inline-block;
+	width: 1em; /* Adjust width to align with text height */
+	height: 1em; /* Ensure it is square to avoid layout shift */
+	line-height: 1em; /* Align vertically */
+	font-size: 1em; /* Adjust font size to match text */
 }
