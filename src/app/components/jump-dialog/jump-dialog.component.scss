@@ -20,8 +20,7 @@ form {
 	}
 	label {
 		padding: 4px 0;
-		font-weight: bold;
-		font-size: 0.85em;
+		font-size: 1em;
 
 		.input-required {
 			color: $bright-yellow;
@@ -30,6 +29,7 @@ form {
 	}
 	input {
 		width: 100%;
+		margin-top: 4px;
 	}
 }
 
