@@ -11,7 +11,7 @@
 		"test": "ng test",
 		"lint": "ng lint",
 		"apigen": "openapi -s http://localhost:8888/api-docs.json -o ./src/app/api -l ts --semicolon",
-		"apigen:live": "openapi -s https://live.odysseuslarp.dev/api-docs.json -o ./src/app/api -l ts --semicolon",
+		"apigen:live": "openapi -s https://odysseus-server.live.odysseuslarp.dev/api-docs.json -o ./src/app/api -l ts --semicolon",
 		"apigen:dev": "openapi -s https://apps.odysseuslarp.dev/api-docs.json -o ./src/app/api -l ts --semicolon",
 		"apigen:dev-cont": "openapi -s http://odysseus-backend:8888/api-docs.json -o ./src/app/api -l ts --semicolon",
 		"e2e": "ng e2e"
