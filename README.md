@@ -1,4 +1,9 @@
-# Odysseus Long Range (Lora) Science Voyager (Jump UI)
+# Odysseus Long Range (LORA) Science Voyager
+
+Frontend for LORA. Used on the ESS Odysseus bridge to explore the starmap, send probes to scan planets and nearby sectors to reveal details, decrypt signals that reveal jump coordinates, and initiate the jump sequence.
+
+<img width="1510" alt="Screenshot 2024-07-09 at 21 00 00" src="https://github.com/user-attachments/assets/4196d839-4ea9-4295-b043-c7a0f9aa7a3a">
+
 
 ## Tech
 
