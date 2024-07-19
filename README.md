@@ -2,8 +2,7 @@
 
 Frontend for LORA. Used on the ESS Odysseus bridge to explore the starmap, send probes to scan planets and nearby sectors to reveal details, decrypt signals that reveal jump coordinates, and initiate the jump sequence.
 
-<img width="1510" alt="Screenshot 2024-07-09 at 21 00 00" src="https://github.com/user-attachments/assets/4196d839-4ea9-4295-b043-c7a0f9aa7a3a">
-
+![Screenshot 2024-07-19 at 10-26-31 LORA Science Voyager](https://github.com/user-attachments/assets/a6a46170-5e25-412f-8096-056d50debb75)
 
 ## Tech
 
